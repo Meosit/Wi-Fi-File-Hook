@@ -9,8 +9,112 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="by.mksn.wififilehook.MainActivity">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity.main.input.resource_path"
+        android:hint="@string/activity.main.input.resource_path.hint"
+        android:layout_above="@+id/activity.main.button.apply"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/activity.main.input.sync_time"
+        android:layout_toStartOf="@+id/activity.main.input.sync_time" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:labelFor="@id/activity.main.input.resource_path"
+        android:text="@string/activity.main.label.resource_path"
+        android:id="@+id/activity.main.label.resource_path"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:layout_above="@+id/activity.main.input.resource_path"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity.main.spinner.wifi_list"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity.main.button.wifi_connect.connect"
+        android:id="@+id/activity.main.button.wifi_connect"
+        android:layout_below="@+id/activity.main.spinner.wifi_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary" />
+
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity.main.input.connected_to"
+        android:layout_below="@+id/activity.main.label.connected_to"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:inputType="none"
+        android:text="@string/activity.main.input.connected_to.default"
+        android:layout_alignRight="@+id/activity.main.button.wifi_connect"
+        android:layout_alignEnd="@+id/activity.main.button.wifi_connect" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity.main.label.connected_to"
+        android:text="@string/activity.main.label.connected_to"
+        android:textColor="@android:color/black"
+        android:labelFor="@id/activity.main.input.connected_to"
+        android:textSize="15sp"
+        android:layout_below="@+id/activity.main.button.wifi_connect"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingTop="10dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/activity.main.input.sync_time"
+        android:layout_alignBottom="@+id/activity.main.input.resource_path"
+        android:layout_alignRight="@+id/activity.main.label.sync_time"
+        android:layout_alignEnd="@+id/activity.main.button.wifi_connect"
+        android:layout_alignTop="@+id/activity.main.input.resource_path"
+        android:layout_alignLeft="@+id/activity.main.label.sync_time"
+        android:layout_alignStart="@+id/activity.main.label.sync_time"
+        android:text="@string/activity.main.input.sync_time.default" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity.main.label.sync_time"
+        android:id="@+id/activity.main.label.sync_time"
+        android:labelFor="@id/activity.main.input.sync_time"
+        android:textSize="15sp"
+        android:textColor="@android:color/black"
+        android:layout_above="@+id/activity.main.input.sync_time"
+        android:layout_alignRight="@+id/activity.main.button.wifi_connect"
+        android:layout_alignEnd="@+id/activity.main.button.wifi_connect" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity.main.button.apply"
+        android:id="@+id/activity.main.button.apply"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/activity.main.button.wifi_connect"
+        android:layout_alignEnd="@+id/activity.main.button.wifi_connect"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary" />
+
 </RelativeLayout>

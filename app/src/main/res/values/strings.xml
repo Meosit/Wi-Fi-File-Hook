@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">WiFiFileHook</string>
+    <string name="app_name">Wi-Fi File Hook</string>
+    <string name="activity.main.label.resource_path">Full address of text resource</string>
+    <string name="activity.main.input.resource_path.hint">192.168.0.0/Share/file.txt</string>
+    <string name="activity.main.label.connected_to">Connected to:</string>
+    <string name="activity.main.button.wifi_connect.connect">Connect</string>
+    <string name="activity.main.button.wifi_connect.reconnect">Reconnect</string>
+    <string name="activity.main.input.connected_to.default">NONE</string>
+    <string name="activity.main.input.sync_time.default">60</string>
+    <string name="activity.main.label.sync_time">Sync time</string>
+    <string name="activity.main.button.apply">Apply and show</string>
 </resources>
