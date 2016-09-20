@@ -34,24 +34,27 @@
 
     <Spinner
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:id="@+id/activity.main.spinner.wifi_list"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        android:layout_alignRight="@+id/activity.main.label.resource_path"
+        android:layout_alignEnd="@+id/activity.main.label.resource_path" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/activity.main.button.wifi_connect.connect"
         android:id="@+id/activity.main.button.wifi_connect"
-        android:layout_below="@+id/activity.main.spinner.wifi_list"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:layout_alignBottom="@+id/activity.main.spinner.wifi_list"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary" />
+        android:layout_toRightOf="@+id/activity.main.spinner.wifi_list"
+        android:layout_toEndOf="@+id/activity.main.spinner.wifi_list" />
 
     <EditText
         android:layout_width="200dp"
@@ -106,7 +109,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="@string/activity.main.button.apply"
         android:id="@+id/activity.main.button.apply"
         android:layout_alignParentLeft="true"
@@ -116,5 +119,39 @@
         android:layout_alignEnd="@+id/activity.main.button.wifi_connect"
         android:textColor="@android:color/white"
         android:background="@color/colorPrimary" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity.main.checkbox.connection_default"
+        android:id="@+id/activity.main.checkbox.connection_default"
+        android:layout_below="@+id/activity.main.input.connected_to"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:id="@+id/activity.main.styling.delimiter.local_network"
+        android:layout_above="@+id/activity.main.label.resource_path"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/activity.main.label.sync_time"
+        android:layout_alignEnd="@+id/activity.main.label.sync_time"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:id="@+id/activity.main.styling.delimiter.wifi"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/activity.main.checkbox.connection_default"
+        android:layout_alignRight="@+id/activity.main.input.connected_to"
+        android:layout_alignEnd="@+id/activity.main.input.connected_to" />
 
 </RelativeLayout>

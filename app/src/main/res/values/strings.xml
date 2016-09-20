@@ -8,5 +8,6 @@
     <string name="activity.main.input.connected_to.default">NONE</string>
     <string name="activity.main.input.sync_time.default">60</string>
     <string name="activity.main.label.sync_time">Sync time</string>
-    <string name="activity.main.button.apply">Apply and show</string>
+    <string name="activity.main.button.apply">Apply</string>
+    <string name="activity.main.checkbox.connection_default">Default connection</string>
 </resources>
