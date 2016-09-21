@@ -7,175 +7,177 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="by.mksn.wififilehook.MainActivity">
+    tools:context=".activity.MainActivity">
 
     <EditText
+        android:id="@+id/activity.main.input.resource_path"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/activity.main.input.resource_path"
-        android:hint="@string/activity.main.input.resource_path.hint"
         android:layout_above="@+id/activity.main.button.apply"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/activity.main.input.sync_time"
-        android:layout_toStartOf="@+id/activity.main.input.sync_time" />
+        android:layout_toStartOf="@+id/activity.main.input.sync_time"
+        android:hint="@string/activity.main.input.resource_path.hint" />
 
     <TextView
+        android:id="@+id/activity.main.label.resource_path"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@id/activity.main.input.resource_path"
-        android:text="@string/activity.main.label.resource_path"
-        android:id="@+id/activity.main.label.resource_path"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
         android:layout_above="@+id/activity.main.input.resource_path"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:labelFor="@id/activity.main.input.resource_path"
+        android:text="@string/activity.main.label.resource_path"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
 
     <Spinner
+        android:id="@+id/activity.main.spinner.wifi_list"
+        style="@android:style/Widget.Holo.Light.Spinner"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:id="@+id/activity.main.spinner.wifi_list"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        style="@android:style/Widget.Holo.Light.Spinner"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
     <Button
+        android:id="@+id/activity.main.button.wifi_connect"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:text="@string/activity.main.button.wifi_connect.connect"
-        android:id="@+id/activity.main.button.wifi_connect"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
-        android:layout_below="@+id/activity.main.spinner.wifi_list"
+        android:layout_alignEnd="@+id/activity.main.spinner.wifi_list"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/activity.main.spinner.wifi_list"
-        android:layout_alignEnd="@+id/activity.main.spinner.wifi_list" />
+        android:layout_below="@+id/activity.main.spinner.wifi_list"
+        android:background="@color/colorPrimary"
+        android:text="@string/activity.main.button.wifi_connect.connect"
+        android:textColor="@android:color/white" />
 
     <EditText
+        android:id="@+id/activity.main.input.status"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/activity.main.input.connected_to"
-        android:layout_below="@+id/activity.main.label.connected_to"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:inputType="none"
-        android:text="@string/activity.main.input.connected_to.default"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:focusable="false"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/activity.main.button.wifi_connect"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/activity.main.label.status"
+        android:layout_toRightOf="@+id/activity.main.label.status"
         android:clickable="false"
-        android:focusableInTouchMode="false" />
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="none"
+        android:text="@string/activity.main.input.status.default"
+        android:textSize="20sp" />
 
     <TextView
+        android:id="@+id/activity.main.label.status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/activity.main.label.connected_to"
-        android:text="@string/activity.main.label.connected_to"
-        android:textColor="@android:color/black"
-        android:labelFor="@id/activity.main.input.connected_to"
-        android:textSize="15sp"
-        android:layout_below="@+id/activity.main.button.wifi_connect"
+        android:layout_alignBottom="@+id/activity.main.input.status"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:paddingTop="10dp" />
+        android:labelFor="@id/activity.main.input.status"
+        android:paddingBottom="10dp"
+        android:text="@string/activity.main.label.status"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
 
     <EditText
+        android:id="@+id/activity.main.input.sync_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/activity.main.input.sync_time"
         android:layout_alignBottom="@+id/activity.main.input.resource_path"
-        android:layout_alignTop="@+id/activity.main.input.resource_path"
         android:layout_alignLeft="@+id/activity.main.label.sync_time"
-        android:layout_alignStart="@+id/activity.main.label.sync_time"
-        android:text="@string/activity.main.input.sync_time.default"
         android:layout_alignParentRight="true"
-        android:hint="@string/activity.main.input.sync_time.hint" />
+        android:layout_alignStart="@+id/activity.main.label.sync_time"
+        android:layout_alignTop="@+id/activity.main.input.resource_path"
+        android:ems="10"
+        android:hint="@string/activity.main.input.sync_time.hint"
+        android:inputType="number"
+        android:text="@string/activity.main.input.sync_time.default" />
 
     <TextView
+        android:id="@+id/activity.main.label.sync_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/activity.main.label.sync_time"
-        android:id="@+id/activity.main.label.sync_time"
-        android:labelFor="@id/activity.main.input.sync_time"
-        android:textSize="15sp"
-        android:textColor="@android:color/black"
         android:layout_above="@+id/activity.main.input.sync_time"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:labelFor="@id/activity.main.input.sync_time"
+        android:text="@string/activity.main.label.sync_time"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
 
     <Button
+        android:id="@+id/activity.main.button.apply"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:text="@string/activity.main.button.apply"
-        android:id="@+id/activity.main.button.apply"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:background="@color/colorPrimary"
+        android:text="@string/activity.main.button.apply"
+        android:textColor="@android:color/white" />
 
     <CheckBox
+        android:id="@+id/activity.main.checkbox.connection_default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/activity.main.checkbox.connection_default"
-        android:id="@+id/activity.main.checkbox.connection_default"
-        android:layout_below="@+id/activity.main.input.connected_to"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:checked="false" />
+        android:layout_below="@+id/activity.main.input.status"
+        android:checked="false"
+        android:text="@string/activity.main.checkbox.connection_default" />
 
     <TextView
+        android:id="@+id/activity.main.styling.delimiter.local_network"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
-        android:id="@+id/activity.main.styling.delimiter.local_network"
         android:layout_above="@+id/activity.main.label.resource_path"
+        android:layout_alignEnd="@+id/activity.main.label.sync_time"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/activity.main.label.sync_time"
-        android:layout_alignEnd="@+id/activity.main.label.sync_time"
-        android:background="@color/colorPrimary"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="2dp"
-        android:id="@+id/activity.main.styling.delimiter.wifi"
-        android:background="@color/colorPrimary"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.checkbox.connection_default"
-        android:layout_alignRight="@+id/activity.main.input.connected_to"
-        android:layout_alignEnd="@+id/activity.main.input.connected_to" />
-
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="70dp"
-        android:text="@string/activity.main.button.show_file"
-        android:id="@+id/activity.main.button.show_file"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:enabled="false"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:layout_marginTop="10dp"
         android:background="@color/colorPrimary" />
 
+    <TextView
+        android:id="@+id/activity.main.styling.delimiter.wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_alignEnd="@+id/activity.main.input.status"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/activity.main.input.status"
+        android:layout_below="@+id/activity.main.checkbox.connection_default"
+        android:background="@color/colorPrimary" />
+
+    <Button
+        android:id="@+id/activity.main.button.show_file"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@color/colorPrimary"
+        android:enabled="false"
+        android:text="@string/activity.main.button.show_file"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
     <CheckBox
+        android:id="@+id/activity.main.checkbox.open_if_can"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/activity.main.checkbox.open_if_can"
-        android:id="@+id/activity.main.checkbox.open_if_can"
-        android:layout_below="@+id/activity.main.button.show_file"
         android:layout_alignLeft="@+id/activity.main.button.show_file"
         android:layout_alignStart="@+id/activity.main.button.show_file"
-        android:checked="true" />
+        android:layout_below="@+id/activity.main.button.show_file"
+        android:checked="true"
+        android:text="@string/activity.main.checkbox.open_if_can" />
 
 </RelativeLayout>
