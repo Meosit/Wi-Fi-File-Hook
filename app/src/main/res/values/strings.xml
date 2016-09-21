@@ -10,4 +10,7 @@
     <string name="activity.main.label.sync_time">Sync time</string>
     <string name="activity.main.button.apply">Apply</string>
     <string name="activity.main.checkbox.connection_default">Default connection</string>
+    <string name="activity.main.button.show_file">Show file</string>
+    <string name="activity.main.checkbox.open_if_can">Open if can on start</string>
+    <string name="activity.main.input.sync_time.hint">60</string>
 </resources>

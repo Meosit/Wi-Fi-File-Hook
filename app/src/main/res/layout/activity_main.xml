@@ -40,8 +40,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         style="@android:style/Widget.Holo.Light.Spinner"
-        android:layout_alignRight="@+id/activity.main.label.resource_path"
-        android:layout_alignEnd="@+id/activity.main.label.resource_path" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -50,13 +50,11 @@
         android:id="@+id/activity.main.button.wifi_connect"
         android:textColor="@android:color/white"
         android:background="@color/colorPrimary"
-        android:layout_alignBottom="@+id/activity.main.spinner.wifi_list"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/activity.main.spinner.wifi_list"
-        android:layout_toEndOf="@+id/activity.main.spinner.wifi_list"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="5dp" />
+        android:layout_below="@+id/activity.main.spinner.wifi_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/activity.main.spinner.wifi_list"
+        android:layout_alignEnd="@+id/activity.main.spinner.wifi_list" />
 
     <EditText
         android:layout_width="200dp"
@@ -68,7 +66,10 @@
         android:inputType="none"
         android:text="@string/activity.main.input.connected_to.default"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:focusable="false"
+        android:clickable="false"
+        android:focusableInTouchMode="false" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -94,7 +95,8 @@
         android:layout_alignLeft="@+id/activity.main.label.sync_time"
         android:layout_alignStart="@+id/activity.main.label.sync_time"
         android:text="@string/activity.main.input.sync_time.default"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:hint="@string/activity.main.input.sync_time.hint" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -157,7 +159,7 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="70dp"
-        android:text="Show file"
+        android:text="@string/activity.main.button.show_file"
         android:id="@+id/activity.main.button.show_file"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -169,7 +171,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open if can on start"
+        android:text="@string/activity.main.checkbox.open_if_can"
         android:id="@+id/activity.main.checkbox.open_if_can"
         android:layout_below="@+id/activity.main.button.show_file"
         android:layout_alignLeft="@+id/activity.main.button.show_file"
