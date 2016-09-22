@@ -37,24 +37,24 @@
         style="@android:style/Widget.Holo.Light.Spinner"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/activity.main.button.refresh"
+        android:layout_toStartOf="@+id/activity.main.button.refresh" />
 
     <Button
         android:id="@+id/activity.main.button.wifi_connect"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_alignEnd="@+id/activity.main.spinner.wifi_list"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/activity.main.spinner.wifi_list"
         android:layout_below="@+id/activity.main.spinner.wifi_list"
         android:background="@color/colorPrimary"
         android:text="@string/activity.main.button.wifi_connect.connect"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:layout_alignRight="@+id/activity.main.label.sync_time"
+        android:layout_alignEnd="@+id/activity.main.label.sync_time" />
 
     <EditText
         android:id="@+id/activity.main.input.status"
@@ -169,5 +169,18 @@
         android:layout_below="@+id/activity.main.button.show_file"
         android:checked="true"
         android:text="@string/activity.main.checkbox.open_if_can" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:id="@+id/activity.main.button.refresh"
+        android:layout_above="@+id/activity.main.button.wifi_connect"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_refresh"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/activity.main.label.sync_time"
+        android:layout_alignStart="@+id/activity.main.label.sync_time" />
 
 </RelativeLayout>

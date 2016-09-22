@@ -9,13 +9,16 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.adapter.ScanResultArrayAdapter;
+import by.mksn.wififilehook.wifi.WifiUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences settings;
     private ScanResultArrayAdapter wifiListAdapter;
     private EditText wifiStatusEdit;
-    private CheckBox defaultWifiCheckBox;
     private CheckBox showIfCanCheckBox;
     private EditText syncTimeEdit;
     private EditText filePathEdit;
@@ -66,10 +68,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }, receiverFilter);
         wifiManager.startScan();
+        ImageButton refreshButton = (ImageButton) findViewById(R.id.activity_main_button_refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                wifiManager.startScan();
+            }
+        });
 
         showIfCanCheckBox = (CheckBox) findViewById(R.id.activity_main_checkbox_open_if_can);
         syncTimeEdit = (EditText) findViewById(R.id.activity_main_input_sync_time);
         filePathEdit = (EditText) findViewById(R.id.activity_main_input_resource_path);
+        wifiStatusEdit = (EditText) findViewById(R.id.activity_main_input_status);
+        wifiStatusEdit.setText("Connected to " + WifiUtil.getActiveWifiInfo(this)[0]);
         loadSettings();
     }
 
@@ -78,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         showIfCanCheckBox.setSelected(settings.getBoolean(PREF_DEFAULT_WIFI_SHOW_IF_CAN, false));
         syncTimeEdit.setText(settings.getString(PREF_DEFAULT_WIFI_SYNC_TIME, "60"));
         filePathEdit.setText(settings.getString(PREF_DEFAULT_WIFI_FILE_PATH, ""));
-
     }
 
     private void enableWifiIfisabled() {
