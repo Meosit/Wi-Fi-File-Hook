@@ -1,7 +1,12 @@
 package by.mksn.wififilehook.wifi;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
 import java.util.List;
@@ -13,7 +18,7 @@ public class WifiUtil {
     public static final String SECURITY_TYPE_PSK = "PSK";
     public static final String SECURITY_TYPE_WEP = "WEP";
     public static final String SECURITY_TYPE_EAP = "EAP";
-    public static final String SECURITY_TYPE_OPEN = "Open";
+    public static final String SECURITY_TYPE_NONE = "Open";
 
     public static boolean hasPassword(WifiConfiguration wifiConfig) {
         return !TextUtils.isEmpty(wifiConfig.preSharedKey)
@@ -33,14 +38,61 @@ public class WifiUtil {
 
     public static String getScanResultSecurity(ScanResult scanResult) {
         final String cap = scanResult.capabilities;
-        final String[] securityModes = {SECURITY_TYPE_WEP, SECURITY_TYPE_PSK, SECURITY_TYPE_EAP, SECURITY_TYPE_WPA, SECURITY_TYPE_WPA2};
+        final String[] securityModes = {SECURITY_TYPE_WEP,
+                SECURITY_TYPE_PSK, SECURITY_TYPE_EAP,
+                SECURITY_TYPE_WPA, SECURITY_TYPE_WPA2};
         for (int i = securityModes.length - 1; i >= 0; i--) {
             if (cap.contains(securityModes[i])) {
                 return securityModes[i];
             }
         }
 
-        return SECURITY_TYPE_OPEN;
+        return SECURITY_TYPE_NONE;
+    }
+
+    static String getSecurity(WifiConfiguration config) {
+        if (config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK)) {
+            return SECURITY_TYPE_PSK;
+        }
+        if (config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP) ||
+                config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X)) {
+            return SECURITY_TYPE_EAP;
+        }
+        return (config.wepKeys[0] != null) ? SECURITY_TYPE_WEP : SECURITY_TYPE_NONE;
+    }
+
+    static String getSecurity(ScanResult result) {
+        if (result.capabilities.contains("WEP")) {
+            return SECURITY_TYPE_WEP;
+        } else if (result.capabilities.contains("PSK")) {
+            return SECURITY_TYPE_PSK;
+        } else if (result.capabilities.contains("EAP")) {
+            return SECURITY_TYPE_EAP;
+        }
+        return SECURITY_TYPE_NONE;
+    }
+
+    public static String[] getActiveWifiInfo(Context context) {
+        String ssid = null;
+        String bssid = null;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return null;
+        }
+
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                ssid = connectionInfo.getSSID();
+                bssid = connectionInfo.getBSSID();
+
+            }
+        }
+
+        return new String[]{ssid, bssid};
     }
 
     public static String surroundWithQuotes(String string) {

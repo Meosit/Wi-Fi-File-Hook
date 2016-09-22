@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -17,12 +19,21 @@ import by.mksn.wififilehook.adapter.ScanResultArrayAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String PREF_DEFAULT_WIFI_SSID = "default_wifi_ssid";
+    private static final String PREF_DEFAULT_WIFI_BSSID = "default_wifi_bssid";
+    private static final String PREF_DEFAULT_WIFI_SECURITY = "default_wifi_security";
+    private static final String PREF_DEFAULT_WIFI_PSK = "default_wifi_psk";
+    private static final String PREF_DEFAULT_WIFI_SYNC_TIME = "sync_time";
+    private static final String PREF_DEFAULT_WIFI_FILE_PATH = "file_path";
+    private static final String PREF_DEFAULT_WIFI_SHOW_IF_CAN = "show_if_can";
     private WifiManager wifiManager;
-
+    private SharedPreferences settings;
     private ScanResultArrayAdapter wifiListAdapter;
-    private Spinner spinner;
-    private EditText wifiStatus;
-
+    private EditText wifiStatusEdit;
+    private CheckBox defaultWifiCheckBox;
+    private CheckBox showIfCanCheckBox;
+    private EditText syncTimeEdit;
+    private EditText filePathEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,24 +42,46 @@ public class MainActivity extends AppCompatActivity {
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-        enableWifiIsDisabled();
+        enableWifiIfisabled();
 
         Spinner wifiSpinner = (Spinner) findViewById(R.id.activity_main_spinner_wifi_list);
         wifiListAdapter = new ScanResultArrayAdapter(getApplicationContext(),
                 wifiManager.getScanResults());
         wifiSpinner.setAdapter(wifiListAdapter);
         wifiSpinner.setSelection(0);
+
+        IntentFilter receiverFilter = new IntentFilter();
+        receiverFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                reloadWifiListAdapter();
+                switch (intent.getAction()) {
+                    case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
+                        reloadWifiListAdapter();
+                        break;
+
+                }
+
             }
-        }, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        }, receiverFilter);
         wifiManager.startScan();
+
+        showIfCanCheckBox = (CheckBox) findViewById(R.id.activity_main_checkbox_open_if_can);
+        syncTimeEdit = (EditText) findViewById(R.id.activity_main_input_sync_time);
+        filePathEdit = (EditText) findViewById(R.id.activity_main_input_resource_path);
+        loadSettings();
+    }
+
+    private void loadSettings() {
+        settings = getPreferences(MODE_PRIVATE);
+        showIfCanCheckBox.setSelected(settings.getBoolean(PREF_DEFAULT_WIFI_SHOW_IF_CAN, false));
+        syncTimeEdit.setText(settings.getString(PREF_DEFAULT_WIFI_SYNC_TIME, "60"));
+        filePathEdit.setText(settings.getString(PREF_DEFAULT_WIFI_FILE_PATH, ""));
 
     }
 
-    private void enableWifiIsDisabled() {
+    private void enableWifiIfisabled() {
         if (!wifiManager.isWifiEnabled()) {
             Toast.makeText(getApplicationContext(), "Wi-Fi is disabled... Making it enabled", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
