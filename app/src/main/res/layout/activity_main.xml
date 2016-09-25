@@ -41,7 +41,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/activity.main.button.refresh"
-        android:layout_toStartOf="@+id/activity.main.button.refresh" />
+        android:layout_toStartOf="@+id/activity.main.button.refresh"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/activity.main.button.wifi_connect"
@@ -54,7 +55,8 @@
         android:text="@string/activity.main.button.wifi_connect.connect"
         android:textColor="@android:color/white"
         android:layout_alignRight="@+id/activity.main.label.sync_time"
-        android:layout_alignEnd="@+id/activity.main.label.sync_time" />
+        android:layout_alignEnd="@+id/activity.main.label.sync_time"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/activity.main.input.status"
@@ -71,7 +73,8 @@
         android:focusableInTouchMode="false"
         android:inputType="none"
         android:text="@string/activity.main.input.status.default"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/activity.main.label.status"
@@ -84,21 +87,22 @@
         android:paddingBottom="10dp"
         android:text="@string/activity.main.label.status"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/activity.main.input.sync_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/activity.main.input.resource_path"
-        android:layout_alignLeft="@+id/activity.main.label.sync_time"
         android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/activity.main.label.sync_time"
         android:layout_alignTop="@+id/activity.main.input.resource_path"
         android:ems="10"
         android:hint="@string/activity.main.input.sync_time.hint"
         android:inputType="number"
-        android:text="@string/activity.main.input.sync_time.default" />
+        android:text="@string/activity.main.input.sync_time.default"
+        android:layout_alignLeft="@+id/activity.main.label.sync_time"
+        android:layout_alignStart="@+id/activity.main.label.sync_time" />
 
     <TextView
         android:id="@+id/activity.main.label.sync_time"
@@ -109,7 +113,9 @@
         android:labelFor="@id/activity.main.input.sync_time"
         android:text="@string/activity.main.label.sync_time"
         android:textColor="@android:color/black"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:layout_toRightOf="@+id/activity.main.button.show_file"
+        android:layout_toEndOf="@+id/activity.main.button.show_file" />
 
     <Button
         android:id="@+id/activity.main.button.apply"
@@ -181,6 +187,7 @@
         android:src="@drawable/ic_refresh"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/activity.main.label.sync_time"
-        android:layout_alignStart="@+id/activity.main.label.sync_time" />
+        android:layout_alignStart="@+id/activity.main.label.sync_time"
+        android:visibility="gone" />
 
 </RelativeLayout>

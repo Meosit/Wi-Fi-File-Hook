@@ -39,8 +39,8 @@ public class WifiUtil {
     public static String getScanResultSecurity(ScanResult scanResult) {
         final String cap = scanResult.capabilities;
         final String[] securityModes = {SECURITY_TYPE_WEP,
-                SECURITY_TYPE_PSK, SECURITY_TYPE_EAP,
-                SECURITY_TYPE_WPA, SECURITY_TYPE_WPA2};
+                SECURITY_TYPE_PSK, SECURITY_TYPE_EAP
+        };
         for (int i = securityModes.length - 1; i >= 0; i--) {
             if (cap.contains(securityModes[i])) {
                 return securityModes[i];
@@ -73,19 +73,19 @@ public class WifiUtil {
     }
 
     public static String[] getActiveWifiInfo(Context context) {
-        String ssid = null;
-        String bssid = null;
+        String ssid = "NONE";
+        String bssid = "NONE";
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null) {
-            return null;
+            return new String[] {ssid, bssid};
         }
 
         if (networkInfo.isConnected()) {
             final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
-            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID()) && !connectionInfo.getSSID().equals("0x")) {
                 ssid = connectionInfo.getSSID();
                 bssid = connectionInfo.getBSSID();
 

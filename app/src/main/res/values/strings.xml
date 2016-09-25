@@ -13,4 +13,5 @@
     <string name="activity.main.button.show_file">Show file</string>
     <string name="activity.main.checkbox.open_if_can">Open if can on start</string>
     <string name="activity.main.input.sync_time.hint">60</string>
+    <string name="password.dialog.label.password">Type password:</string>
 </resources>
