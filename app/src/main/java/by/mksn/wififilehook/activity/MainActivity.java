@@ -1,8 +1,6 @@
 package by.mksn.wififilehook.activity;
 
 import android.content.SharedPreferences;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,13 +8,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import by.mksn.wififilehook.R;
-import by.mksn.wififilehook.adapter.ScanResultArrayAdapter;
+import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileInputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,13 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_DEFAULT_WIFI_FILE_PATH = "file_path";
     private static final String PREF_DEFAULT_WIFI_SHOW_IF_CAN = "show_if_can";
 
-    private WifiManager wifiManager;
     private SharedPreferences settings;
-    private ScanResultArrayAdapter wifiListAdapter;
-    private EditText wifiStatusEdit;
     private CheckBox showIfCanCheckBox;
     private EditText syncTimeEdit;
     private EditText filePathEdit;
+    private TextView fileView;
+    private Button showButton;
+
 
     private SmbFile smbFile;
     private Handler handler;
@@ -42,100 +48,39 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
                 smbFile = new SmbFile("smb://" + filePathEdit.getText().toString());
+                showButton.setEnabled(true);
+                if (showIfCanCheckBox.isChecked()) {
+                    showButton.callOnClick();
+                }
                 startUpdate();
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
+                smbFile = null;
+                showButton.setEnabled(true);
                 Toast.makeText(getApplicationContext(), "Cannot find or open file now", Toast.LENGTH_LONG).show();
             }
         }
-    };;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         settings = getPreferences(MODE_PRIVATE);
-        /*wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
-        enableWifiIfDisabled();
-
-        final Spinner wifiSpinner = (Spinner) findViewById(R.id.activity_main_spinner_wifi_list);
-        wifiListAdapter = new ScanResultArrayAdapter(getApplicationContext(),
-                wifiManager.getScanResults());
-        wifiSpinner.setAdapter(wifiListAdapter);
-        wifiSpinner.setSelection(0);
-
-        IntentFilter receiverFilter = new IntentFilter();
-        receiverFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                switch (intent.getAction()) {
-                    case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
-                        reloadWifiListAdapter();
-                        break;
-
-                }
-
-            }
-        }, receiverFilter);
-        wifiManager.startScan();
-        ImageButton refreshButton = (ImageButton) findViewById(R.id.activity_main_button_refresh);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                wifiManager.startScan();
-            }
-        });
-
-        Button connectButton = (Button) findViewById(R.id.activity_main_button_wifi_connect);
-        connectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final ScanResult result = (ScanResult) wifiSpinner.getSelectedItem();
-                if (WifiUtil.getScanResultSecurity(result).equals(WifiUtil.SECURITY_TYPE_PSK)) {
-                    LayoutInflater li = LayoutInflater.from(MainActivity.this);
-                    View promptsView = li.inflate(R.layout.password_dialog, null);
-
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                            MainActivity.this);
-
-                    alertDialogBuilder.setView(promptsView);
-
-                    final EditText userInput = (EditText) promptsView
-                            .findViewById(R.id.password_dialog_input_password);
-
-                    // set dialog message
-                    alertDialogBuilder
-                            .setCancelable(false)
-                            .setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //Boolean b = connectToAccessPoint(result.SSID, userInput.getText().toString());
-                                            //Toast.makeText(MainActivity.this, b.toString(), Toast.LENGTH_LONG).show();
-                                        }
-                                    })
-                            .setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                    // create alert dialog
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-
-                    // show it
-                    alertDialog.show();
-                }
-            }
-        });
-        wifiStatusEdit = (EditText) findViewById(R.id.activity_main_input_status);
-        wifiStatusEdit.setText("Connected to " + WifiUtil.getActiveWifiInfo(this)[0]);
-        */
         showIfCanCheckBox = (CheckBox) findViewById(R.id.activity_main_checkbox_open_if_can);
         syncTimeEdit = (EditText) findViewById(R.id.activity_main_input_sync_time);
         filePathEdit = (EditText) findViewById(R.id.activity_main_input_resource_path);
+
+        showButton = (Button) findViewById(R.id.activity_main_button_show_file);
+        showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (showButton.isEnabled() && smbFile != null) {
+                    String fileString = readFileContent(smbFile, new StringBuilder()).toString();
+                    fileView.setText(fileString);
+                }
+            }
+        });
+
         Button applyButton = (Button) findViewById(R.id.activity_main_button_apply);
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,9 +102,42 @@ public class MainActivity extends AppCompatActivity {
         });
 
         loadSettings();
+        startScanFile();
     }
 
-    public void callStartTimer() {
+    private StringBuilder readFileContent(SmbFile sFile, StringBuilder builder) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(new SmbFileInputStream(sFile)));
+        } catch (SmbException | MalformedURLException | UnknownHostException ex) {
+            Logger.getLogger(MainActivity.class.getName()).log(Level.SEVERE, null, ex);
+            Toast.makeText(getApplicationContext(), "Cannot read file", Toast.LENGTH_LONG).show();
+        }
+        String lineReader = null;
+        {
+            try {
+                if (reader != null) {
+                    while ((lineReader = reader.readLine()) != null) {
+                        builder.append(lineReader).append("\n");
+                    }
+                }
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(MainActivity.class.getName()).log(Level.SEVERE, null, ex);
+                    Toast.makeText(getApplicationContext(), "Cannot read file", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        return builder;
+    }
+
+    public void startScanFile() {
         handler = new Handler();
         handler.post(runnable);
     }
@@ -173,46 +151,6 @@ public class MainActivity extends AppCompatActivity {
         syncTimeEdit.setText(settings.getString(PREF_DEFAULT_WIFI_SYNC_TIME, "60"));
         syncTime = Long.parseLong(syncTimeEdit.getText().toString()) * 1000;
         filePathEdit.setText(settings.getString(PREF_DEFAULT_WIFI_FILE_PATH, ""));
-    }
-
-  /*  private boolean connectToAccessPoint(String ssid, String psk) {
-        WifiConfiguration configuration = new WifiConfiguration();
-        configuration.SSID = WifiUtil.surroundWithQuotes(ssid);
-        configuration.preSharedKey = WifiUtil.surroundWithQuotes(psk);
-
-        wifiManager.addNetwork(configuration);
-
-        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-        for (WifiConfiguration i : list) {
-            if ((i.SSID != null && i.SSID.equals(WifiUtil.surroundWithQuotes(ssid)))) {
-                wifiManager.disconnect();
-                wifiManager.enableNetwork(i.networkId, true);
-                wifiManager.reconnect();
-
-                break;
-            }
-        }
-
-        return WifiUtil.getActiveWifiInfo(getApplicationContext())[0].equals(ssid);
-    }
-*/
-    private void enableWifiIfDisabled() {
-        if (!wifiManager.isWifiEnabled()) {
-            Toast.makeText(getApplicationContext(), "Wi-Fi is disabled... Making it enabled", Toast.LENGTH_LONG).show();
-            wifiManager.setWifiEnabled(true);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ignored) {
-            }
-        }
-    }
-
-    private void reloadWifiListAdapter() {
-        wifiListAdapter.clear();
-        for (ScanResult scanResult : wifiManager.getScanResults()) {
-            wifiListAdapter.add(scanResult);
-        }
-        wifiListAdapter.notifyDataSetChanged();
     }
 
 }

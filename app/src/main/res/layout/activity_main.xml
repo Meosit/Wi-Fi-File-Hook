@@ -32,77 +32,19 @@
         android:textColor="@android:color/black"
         android:textSize="15sp" />
 
-    <Spinner
-        android:id="@+id/activity.main.spinner.wifi_list"
-        style="@android:style/Widget.Holo.Light.Spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/activity.main.button.refresh"
-        android:layout_toStartOf="@+id/activity.main.button.refresh"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/activity.main.button.wifi_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.spinner.wifi_list"
-        android:background="@color/colorPrimary"
-        android:text="@string/activity.main.button.wifi_connect.connect"
-        android:textColor="@android:color/white"
-        android:layout_alignRight="@+id/activity.main.label.sync_time"
-        android:layout_alignEnd="@+id/activity.main.label.sync_time"
-        android:visibility="gone" />
-
-    <EditText
-        android:id="@+id/activity.main.input.status"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/activity.main.button.wifi_connect"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/activity.main.label.status"
-        android:layout_toRightOf="@+id/activity.main.label.status"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:inputType="none"
-        android:text="@string/activity.main.input.status.default"
-        android:textSize="20sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/activity.main.label.status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/activity.main.input.status"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:labelFor="@id/activity.main.input.status"
-        android:paddingBottom="10dp"
-        android:text="@string/activity.main.label.status"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:visibility="gone" />
-
     <EditText
         android:id="@+id/activity.main.input.sync_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/activity.main.input.resource_path"
+        android:layout_alignLeft="@+id/activity.main.label.sync_time"
         android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/activity.main.label.sync_time"
         android:layout_alignTop="@+id/activity.main.input.resource_path"
         android:ems="10"
         android:hint="@string/activity.main.input.sync_time.hint"
         android:inputType="number"
-        android:text="@string/activity.main.input.sync_time.default"
-        android:layout_alignLeft="@+id/activity.main.label.sync_time"
-        android:layout_alignStart="@+id/activity.main.label.sync_time" />
+        android:text="@string/activity.main.input.sync_time.default" />
 
     <TextView
         android:id="@+id/activity.main.label.sync_time"
@@ -110,12 +52,12 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/activity.main.input.sync_time"
         android:layout_alignParentRight="true"
+        android:layout_toEndOf="@+id/activity.main.button.show_file"
+        android:layout_toRightOf="@+id/activity.main.button.show_file"
         android:labelFor="@id/activity.main.input.sync_time"
         android:text="@string/activity.main.label.sync_time"
         android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:layout_toRightOf="@+id/activity.main.button.show_file"
-        android:layout_toEndOf="@+id/activity.main.button.show_file" />
+        android:textSize="15sp" />
 
     <Button
         android:id="@+id/activity.main.button.apply"
@@ -143,23 +85,12 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorPrimary" />
 
-    <TextView
-        android:id="@+id/activity.main.styling.delimiter.wifi"
-        android:layout_width="wrap_content"
-        android:layout_height="2dp"
-        android:layout_alignEnd="@+id/activity.main.input.status"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/activity.main.input.status"
-        android:layout_below="@+id/activity.main.input.status"
-        android:background="@color/colorPrimary" />
-
     <Button
         android:id="@+id/activity.main.button.show_file"
         android:layout_width="200dp"
-        android:layout_height="70dp"
+        android:layout_height="40dp"
+        android:layout_above="@+id/activity.main.checkbox.open_if_can"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:background="@color/colorPrimary"
         android:enabled="false"
         android:text="@string/activity.main.button.show_file"
@@ -170,24 +101,30 @@
         android:id="@+id/activity.main.checkbox.open_if_can"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/activity.main.styling.delimiter.local_network"
         android:layout_alignLeft="@+id/activity.main.button.show_file"
         android:layout_alignStart="@+id/activity.main.button.show_file"
-        android:layout_below="@+id/activity.main.button.show_file"
         android:checked="true"
         android:text="@string/activity.main.checkbox.open_if_can" />
 
-    <ImageButton
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:id="@+id/activity.main.button.refresh"
-        android:layout_above="@+id/activity.main.button.wifi_connect"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_refresh"
+        android:layout_above="@+id/activity.main.button.show_file"
+        android:layout_alignEnd="@+id/activity.main.styling.delimiter.local_network"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/activity.main.label.sync_time"
-        android:layout_alignStart="@+id/activity.main.label.sync_time"
-        android:visibility="gone" />
+        android:layout_alignRight="@+id/activity.main.styling.delimiter.local_network">
+
+        <TextView
+            android:id="@+id/activity.main.label.file_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medium Text"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+    </ScrollView>
 
 </RelativeLayout>
