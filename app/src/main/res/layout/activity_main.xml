@@ -3,34 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.MainActivity"
+    android:padding="5dp">
 
     <EditText
         android:id="@+id/activity.main.input.resource_path"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/activity.main.button.apply"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:hint="@string/activity.main.input.resource_path.hint"
+        android:layout_below="@+id/activity.main.label.resource_path"
+        android:layout_alignLeft="@+id/activity.main.label.resource_path"
+        android:layout_alignStart="@+id/activity.main.label.resource_path"
         android:layout_toLeftOf="@+id/activity.main.input.sync_time"
-        android:layout_toStartOf="@+id/activity.main.input.sync_time"
-        android:hint="@string/activity.main.input.resource_path.hint" />
+        android:layout_toStartOf="@+id/activity.main.input.sync_time" />
 
     <TextView
         android:id="@+id/activity.main.label.resource_path"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/activity.main.input.resource_path"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:labelFor="@id/activity.main.input.resource_path"
         android:text="@string/activity.main.label.resource_path"
         android:textColor="@android:color/black"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/activity.main.scrollview.text"
+        android:layout_alignStart="@+id/activity.main.scrollview.text" />
 
     <EditText
         android:id="@+id/activity.main.input.sync_time"
@@ -52,79 +49,113 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/activity.main.input.sync_time"
         android:layout_alignParentRight="true"
-        android:layout_toEndOf="@+id/activity.main.button.show_file"
-        android:layout_toRightOf="@+id/activity.main.button.show_file"
         android:labelFor="@id/activity.main.input.sync_time"
         android:text="@string/activity.main.label.sync_time"
         android:textColor="@android:color/black"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/activity.main.button.apply"
+        android:id="@+id/activity.main.button.refresh"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"
-        android:text="@string/activity.main.button.apply"
-        android:textColor="@android:color/white" />
+        android:text="@string/activity.main.button.refresh"
+        android:textColor="@android:color/white"
+        style="@style/SelectableItemBackground"
+        android:layout_toLeftOf="@+id/activity.main.button.stop"
+        android:layout_toStartOf="@+id/activity.main.button.stop"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp" />
 
     <TextView
         android:id="@+id/activity.main.styling.delimiter.local_network"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
-        android:layout_above="@+id/activity.main.label.resource_path"
-        android:layout_alignEnd="@+id/activity.main.label.sync_time"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/activity.main.label.sync_time"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorPrimary" />
-
-    <Button
-        android:id="@+id/activity.main.button.show_file"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_above="@+id/activity.main.checkbox.open_if_can"
-        android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        android:enabled="false"
-        android:text="@string/activity.main.button.show_file"
-        android:textColor="@android:color/white"
-        android:textSize="20sp" />
-
-    <CheckBox
-        android:id="@+id/activity.main.checkbox.open_if_can"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/activity.main.styling.delimiter.local_network"
-        android:layout_alignLeft="@+id/activity.main.button.show_file"
-        android:layout_alignStart="@+id/activity.main.button.show_file"
-        android:checked="true"
-        android:text="@string/activity.main.checkbox.open_if_can" />
+        android:layout_below="@+id/activity.main.input.resource_path"
+        android:layout_toRightOf="@+id/activity.main.scrollview.text"
+        android:layout_toEndOf="@+id/activity.main.scrollview.text" />
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/activity.main.scrollview.text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/activity.main.button.show_file"
-        android:layout_alignEnd="@+id/activity.main.styling.delimiter.local_network"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/activity.main.styling.delimiter.local_network">
+        android:background="@drawable/file_view_border"
+        android:focusable="false"
+        android:layout_above="@+id/activity.main.button.refresh"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:fillViewport="false"
+        android:visibility="visible"
+        android:layout_below="@+id/activity.main.label.sync_status">
 
         <TextView
             android:id="@+id/activity.main.label.file_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Medium Text"
+            android:text="Trying to find file..."
             android:textColor="@android:color/black"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:padding="3dp"
+            android:focusable="true"
+            android:textIsSelectable="true"
+            android:maxLines="1000" />
     </ScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:text="Stop"
+        android:id="@+id/activity.main.button.stop"
+        android:layout_alignTop="@+id/activity.main.button.refresh"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="@android:color/holo_red_dark"
+        android:textColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/file_view_border"
+        android:id="@+id/activity.main.scrollview.vertical.image"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/activity.main.button.refresh"
+        android:fillViewport="false"
+        android:visibility="invisible"
+        android:layout_below="@+id/activity.main.label.sync_status">
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity.main.scrollview.horizontal.image"
+            android:fillViewport="false" >
+
+            <ImageView
+                android:layout_margin="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity.main.image"
+                android:src="@android:drawable/ic_delete" />
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Synchronization time: "
+        android:id="@+id/activity.main.label.sync_status"
+        android:layout_below="@+id/activity.main.input.resource_path"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@android:color/black"
+        android:paddingBottom="5dp" />
 
 </RelativeLayout>
