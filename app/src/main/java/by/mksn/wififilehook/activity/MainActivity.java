@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isImage() {
+        if (filePath.isEmpty()) {
+            return false;
+        }
         String ext = filePath.substring(filePath.lastIndexOf('.'), filePath.length()).toUpperCase();
         switch (ext) {
             case ".JPEG":
