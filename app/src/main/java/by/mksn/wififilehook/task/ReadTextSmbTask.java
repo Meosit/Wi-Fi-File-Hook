@@ -37,7 +37,7 @@ public class ReadTextSmbTask extends AsyncTask<String, String, String> {
             readFileContent(smbFile, content);
             return content.toString();
         } catch (Exception e) {
-            return "Cannot find or open or read file now. \nCaused by: \n" + e.getClass().getSimpleName() + "(" + e.getMessage() + ")";
+            return "Error: " + e.getMessage();
         }
     }
 
@@ -69,12 +69,15 @@ public class ReadTextSmbTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String string) {
         fileView.setText(string);
+        syncStatus.setText(getSyncTime());
+    }
+
+    private String getSyncTime() {
         Calendar c = Calendar.getInstance();
         String time = String.format(Locale.ROOT, "%02d:%02d:%02d",
                 c.get(Calendar.HOUR_OF_DAY),
                 c.get(Calendar.MINUTE),
                 c.get(Calendar.SECOND));
-        time = "Synchronization time: " + time;
-        syncStatus.setText(time);
+        return  "Synchronization time: " + time;
     }
 }

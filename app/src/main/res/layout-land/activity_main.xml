@@ -12,10 +12,9 @@
         android:layout_height="40dp"
         android:hint="@string/activity.main.input.resource_path.hint"
         android:layout_below="@+id/activity.main.label.resource_path"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/activity.main.button.refresh"
-        android:layout_toLeftOf="@+id/activity.main.button.refresh" />
+        android:layout_alignLeft="@+id/activity.main.label.resource_path"
+        android:layout_alignStart="@+id/activity.main.label.resource_path"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/activity.main.label.resource_path"
@@ -41,50 +40,24 @@
         android:text="Loading..."
         android:id="@+id/activity.main.value.status"
         android:textColor="@android:color/black"
-        android:layout_below="@+id/activity.main.input.resource_path"
-        android:layout_toRightOf="@+id/activity.main.styling.delimiter.local_network"
-        android:layout_alignRight="@+id/activity.main.progress"
-        android:layout_alignEnd="@+id/activity.main.progress"
-        android:textSize="18sp" />
+        android:layout_above="@+id/activity.main.progress"
+        android:layout_toRightOf="@+id/activity.main.input.resource_path"
+        android:layout_toEndOf="@+id/activity.main.input.resource_path"
+        android:layout_alignTop="@+id/activity.main.input.resource_path"
+        android:textSize="18sp"
+        android:layout_alignWithParentIfMissing="false" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
         android:id="@+id/activity.main.progress"
-        android:layout_below="@+id/activity.main.value.status"
+        android:indeterminate="false"
+        android:progress="100"
+        android:layout_above="@+id/activity.main.styling.delimiter.local_network"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="5dp"
-        android:indeterminate="false"
-        android:progress="100" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/activity.main.button.stop"
-        android:src="@drawable/ic_stop"
-        android:background="?android:selectableItemBackground"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/activity.main.input.resource_path"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/activity.main.button.refresh"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/activity.main.button.stop"
-        android:layout_toStartOf="@+id/activity.main.button.stop"
-        android:layout_alignBottom="@+id/activity.main.input.resource_path"
-        android:src="@drawable/ic_refresh"
-        android:background="?android:selectableItemBackground"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp" />
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

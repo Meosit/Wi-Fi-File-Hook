@@ -17,7 +17,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import by.mksn.wififilehook.R;
-import by.mksn.wififilehook.custom.ZoomableImageView;
 import by.mksn.wififilehook.task.ReadImageSmbTask;
 import by.mksn.wififilehook.task.ReadTextSmbTask;
 
@@ -25,10 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREF_DEFAULT_WIFI_SYNC_TIME = "sync_time";
     private static final String PREF_DEFAULT_WIFI_FILE_PATH = "file_path";
-
-    public static final int TYPE_TEXT = 1;
-    public static final int TYPE_IMAGE = 2;
-
 
     private SharedPreferences settings;
     private EditText syncTimeEdit;
@@ -56,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         imageOutputView = (ImageView) findViewById(R.id.activity_main_image);
         imageContainer = (ScrollView) findViewById(R.id.activity_main_scrollview_vertical_image);
         textContainer = (ScrollView) findViewById(R.id.activity_main_scrollview_text);
-        syncStatus = (TextView) findViewById(R.id.activity_main_label_sync_status);
+        syncStatus = (TextView) findViewById(R.id.activity_main_value_status);
         timer = new Timer();
 
         final Button refreshButton = (Button) findViewById(R.id.activity_main_button_refresh);
