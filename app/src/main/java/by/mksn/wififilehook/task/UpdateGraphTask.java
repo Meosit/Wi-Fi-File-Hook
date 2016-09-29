@@ -14,14 +14,14 @@ import java.util.Locale;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
 
-public class ReadTextSmbTask extends AsyncTask<String, String, String> {
+public class UpdateGraphTask extends AsyncTask<String, String, String> {
 
     private TextView syncStatus;
     private TextView fileView;
     private long syncTime;
     private Context context;
 
-    public ReadTextSmbTask(TextView syncStatus,TextView textView, Context context, long syncTime) {
+    public UpdateGraphTask(TextView syncStatus, TextView textView, Context context, long syncTime) {
         this.syncStatus = syncStatus;
         fileView = textView;
         this.syncTime = syncTime;

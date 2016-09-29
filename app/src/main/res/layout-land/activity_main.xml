@@ -3,61 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity"
-    android:padding="5dp">
+    tools:context=".activity.MainActivity">
 
-    <EditText
-        android:id="@+id/activity.main.input.resource_path"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:hint="@string/activity.main.input.resource_path.hint"
-        android:layout_below="@+id/activity.main.label.resource_path"
-        android:layout_alignLeft="@+id/activity.main.label.resource_path"
-        android:layout_alignStart="@+id/activity.main.label.resource_path"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/activity.main.label.resource_path"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/activity.main.toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:labelFor="@id/activity.main.input.resource_path"
-        android:text="@string/activity.main.label.resource_path"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:layout_alignParentTop="true" />
+        android:background="@color/colorPrimary"
+        >
+    </android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/activity.main.styling.delimiter.local_network"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
-        android:background="@color/colorPrimary"
-        android:layout_below="@+id/activity.main.input.resource_path" />
+        android:background="@color/colorPrimary" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Loading..."
         android:id="@+id/activity.main.value.status"
         android:textColor="@android:color/black"
-        android:layout_above="@+id/activity.main.progress"
-        android:layout_toRightOf="@+id/activity.main.input.resource_path"
-        android:layout_toEndOf="@+id/activity.main.input.resource_path"
-        android:layout_alignTop="@+id/activity.main.input.resource_path"
         android:textSize="18sp"
-        android:layout_alignWithParentIfMissing="false" />
+        android:layout_below="@+id/activity.main.toolbar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
-        android:layout_height="2dp"
+        android:layout_height="10dp"
         android:id="@+id/activity.main.progress"
-        android:indeterminate="false"
-        android:progress="100"
-        android:layout_above="@+id/activity.main.styling.delimiter.local_network"
+        android:layout_below="@+id/activity.main.value.status"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:indeterminate="false"
+        android:visibility="visible"
+        android:max="100"
+        android:progress="50" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity.main.graph"
+        android:layout_below="@+id/activity.main.progress"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/overview" />
 
 </RelativeLayout>
