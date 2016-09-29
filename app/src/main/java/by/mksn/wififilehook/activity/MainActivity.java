@@ -1,5 +1,7 @@
 package by.mksn.wififilehook.activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,10 +10,13 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.task.UpdateGraphTask;
 import uk.co.senab.photoview.PhotoViewAttacher;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,8 +40,16 @@ public class MainActivity extends AppCompatActivity {
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
 
         toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar); // Attaching the layout to the toolbar object
-        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
+        //toolbar.setTitleTextColor(android.graphics.Color.WHITE);
         setSupportActionBar(toolbar);
+
+
+        loadSettings();
+    }
+
+    private void loadSettings() {
+        SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
+        filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
     }
 
 
@@ -50,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                startActivityForResult(
+                        new Intent(MainActivity.this, SettingsActivity.class),
+                        SettingsActivity.REQUEST_CODE);
                 return true;
             case R.id.action_stop:
                 return true;
@@ -59,5 +75,14 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            loadSettings();
+            Toast.makeText(getApplicationContext(), R.string.activity_main_message_info_settings_updated, Toast.LENGTH_LONG).show();
+        }
+    }
+
 
 }

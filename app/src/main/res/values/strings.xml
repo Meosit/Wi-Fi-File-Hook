@@ -20,4 +20,6 @@
     <string name="settings.file_path.summary">Provide full path of resource file in local network</string>
     <string name="settings.file_path.title">Resource address</string>
     <string name="settings.file_path.hint">192.168.1.1/Share/test.csv</string>
+    <string name="settings.title">Settings</string>
+    <string name="activity.main.message.info.settings_updated">Settings has been updated</string>
 </resources>
