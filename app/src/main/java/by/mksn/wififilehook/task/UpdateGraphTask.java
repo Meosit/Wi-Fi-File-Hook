@@ -2,82 +2,84 @@ package by.mksn.wififilehook.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Calendar;
-import java.util.Locale;
+import java.util.ArrayList;
 
+import by.mksn.wififilehook.R;
+import by.mksn.wififilehook.logic.CsvFurnaceTemperatureTable;
+import by.mksn.wififilehook.logic.ProgressResult;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
 
-public class UpdateGraphTask extends AsyncTask<String, String, String> {
+public class UpdateGraphTask extends AsyncTask<String, ProgressResult, CsvFurnaceTemperatureTable> {
 
-    private TextView syncStatus;
-    private TextView fileView;
-    private long syncTime;
+
+    private int maxProgressValue = 100;
+    private AsyncTaskCallback<ProgressResult, CsvFurnaceTemperatureTable> callback;
     private Context context;
 
-    public UpdateGraphTask(TextView syncStatus, TextView textView, Context context, long syncTime) {
-        this.syncStatus = syncStatus;
-        fileView = textView;
-        this.syncTime = syncTime;
+    public UpdateGraphTask(AsyncTaskCallback<ProgressResult, CsvFurnaceTemperatureTable> callback, Context context) {
+        this.callback = callback;
         this.context = context;
     }
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected void onPreExecute() {
+        callback.onAsyncTaskPreExecute();
+    }
+
+    @Override
+    protected CsvFurnaceTemperatureTable doInBackground(String... strings) {
         SmbFile smbFile;
         try {
             smbFile = new SmbFile("smb://" + strings[0]);
-            StringBuilder content = new StringBuilder();
-            readFileContent(smbFile, content);
-            return content.toString();
+            publishProgress(new ProgressResult(1,
+                    context.getString(R.string.asynctask_message_file_opened)));
+            String[] readFile = readFileContent(smbFile);
+            if (isCancelled()) {
+                return null;
+            }
+            publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
+            return new CsvFurnaceTemperatureTable(readFile);
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            publishProgress(new ProgressResult(maxProgressValue,
+                    context.getString(R.string.asynctask_message_error, e.getMessage())));
+            return null;
         }
     }
 
-    private StringBuilder readFileContent(SmbFile sFile, StringBuilder builder) throws IOException {
+    private String[] readFileContent(SmbFile sFile) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new SmbFileInputStream(sFile)));
-        String lineReader;
+        ArrayList<String> result = new ArrayList<>();
+        String readLine;
         try {
-            while ((lineReader = reader.readLine()) != null) {
-                builder.append(">").append(lineReader).append("\n");
+            while ((readLine = reader.readLine()) != null) {
+                result.add(readLine);
                 if (isCancelled()) {
-                    break;
+                    return null;
                 }
             }
-            publishProgress("Updated");
         } finally {
             reader.close();
         }
-        return builder;
+        return (String[]) result.toArray();
     }
 
     @Override
-    protected void onProgressUpdate(String... values) {
-        //fileView.setText(values[0]);
-        if (syncTime >= 10000) {
-            Toast.makeText(context, values[0], Toast.LENGTH_SHORT).show();
-        }
+    protected void onProgressUpdate(ProgressResult... values) {
+        callback.onAsyncTaskProgressUpdate(values[0]);
     }
 
     @Override
-    protected void onPostExecute(String string) {
-        fileView.setText(string);
-        syncStatus.setText(getSyncTime());
+    protected void onCancelled(CsvFurnaceTemperatureTable csvFurnaceTemperatureTable) {
+        callback.onAsyncTaskCancelled(csvFurnaceTemperatureTable);
     }
 
-    private String getSyncTime() {
-        Calendar c = Calendar.getInstance();
-        String time = String.format(Locale.ROOT, "%02d:%02d:%02d",
-                c.get(Calendar.HOUR_OF_DAY),
-                c.get(Calendar.MINUTE),
-                c.get(Calendar.SECOND));
-        return  "Synchronization time: " + time;
+    @Override
+    protected void onPostExecute(CsvFurnaceTemperatureTable result) {
+        callback.onAsyncTaskPostExecute(result);
     }
 }
