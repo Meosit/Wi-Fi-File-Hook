@@ -85,19 +85,32 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         updateGraphTask.execute(filePath);
     }
 
+    private void drawGraphOverview() {
+/*        //Create a new image bitmap and attach a brand new canvas to it
+        Bitmap graphBackground = BitmapFactory.decodeResource(getResources(), R.drawable.overview);
+        Bitmap tempGraph = Bitmap.createBitmap(graphBackground.getWidth(), graphBackground.getHeight(), Bitmap.Config.RGB_565);
+        Canvas tempCanvas = new Canvas(tempGraph);
+
+        //Draw the image bitmap into the cavas
+        tempCanvas.drawBitmap(graphBackground, 0, 0, null);
+
+        //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
+        Paint myPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        myPaint.setColor(0xFF00CC00);
+        tempCanvas.drawCircle(, 2, 2, myPaint);
+
+        //Attach the canvas to the ImageView
+        graphOverviewImage.setImageDrawable(new BitmapDrawable(getResources(), tempGraph));
+        overviewZoomer.update();
+*/
+    }
+
     private void stopUpdating() {
         if (isAsyncTaskRunning) {
             updateGraphTask.cancel(true);
         } else {
             statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        this.menu = menu;
-        return true;
     }
 
     private void updateMenuTitles() {
@@ -109,6 +122,13 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             isShowConcreteFurnace = true;
             showFurnaceMenuItem.setTitle(R.string.menu_main_show_concrete_furnace_enable);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        return true;
     }
 
     @Override
