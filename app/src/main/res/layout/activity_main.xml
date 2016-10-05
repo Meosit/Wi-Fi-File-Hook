@@ -10,14 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:theme="@style/AppTheme.AppBarOverlay"></android.support.v7.widget.Toolbar>
+        android:theme="@style/AppTheme.AppBarOverlay" />
 
     <TextView
         android:id="@+id/activity.main.styling.delimiter.local_network"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
         android:background="@color/colorPrimary" />
-
     <TextView
         android:id="@+id/activity.main.value.status"
         android:layout_width="match_parent"
@@ -26,29 +25,30 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.toolbar"
+        android:layout_below="@+id/activity.main.progress"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:paddingTop="3dp"
         android:text="Loading..."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
 
     <ProgressBar
         android:id="@+id/activity.main.progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.value.status"
-        android:indeterminate="false"
+        android:layout_below="@+id/activity.main.toolbar"
+        android:indeterminate="true"
         android:max="100"
-        android:progress="0"
-        android:visibility="visible" />
+        android:progress="50"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/activity.main.graph.overview"
@@ -59,9 +59,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.progress"
-        android:scaleType="fitStart"
-        android:src="@drawable/overview" />
+        android:layout_below="@+id/activity.main.styling.status_separator"
+        android:scaleType="center"
+        android:src="@drawable/dummy" />
 
     <ImageView
         android:id="@+id/activity.main.graph.concrete"
@@ -72,8 +72,20 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.progress"
-        android:src="@drawable/concrete"
+        android:layout_below="@+id/activity.main.styling.status_separator"
+        android:scaleType="center"
+        android:src="@drawable/dummy"
         android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/activity.main.styling.status_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/activity.main.value.status"
+        android:background="@color/colorPrimary" />
 
 </RelativeLayout>

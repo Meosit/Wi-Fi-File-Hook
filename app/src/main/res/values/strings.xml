@@ -23,7 +23,8 @@
     <string name="settings.title">Settings</string>
     <string name="activity.main.message.info.settings_updated">Settings has been updated</string>
     <string name="asynctask.message.error">"Error occurred: %1$s"</string>
-    <string name="asynctask.message.file_opened">File opened. Start reading file… </string>
+    <string name="asynctask.message.file_opened">Opening file… </string>
+    <string name="asynctask.message.file_reading">Reading file… %1$d%%</string>
     <string name="asynctask.message.cancelled">Updating cancelled. Time: %1$s</string>
     <string name="asynctask.message.sync_time">"Synchronization time: %1$s"</string>
     <string name="asynctask.message.parsing_file">File is read. Start parsing file…</string>

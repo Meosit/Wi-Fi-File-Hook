@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -12,7 +13,6 @@ import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.logic.CsvFurnaceTemperatureTable;
 import by.mksn.wififilehook.logic.ProgressResult;
 import jcifs.smb.SmbFile;
-import jcifs.smb.SmbFileInputStream;
 
 public class UpdateGraphTask extends AsyncTask<String, ProgressResult, CsvFurnaceTemperatureTable> {
 
@@ -52,12 +52,16 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, CsvFurnac
     }
 
     private String[] readFileContent(SmbFile sFile) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new SmbFileInputStream(sFile)));
+        InputStream stream = sFile.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         ArrayList<String> result = new ArrayList<>();
         String readLine;
         try {
+            int full = stream.available();
             while ((readLine = reader.readLine()) != null) {
                 result.add(readLine);
+                int percent = Math.round((1 - stream.available() / full) * 100);
+                publishProgress(new ProgressResult(percent, context.getString(R.string.asynctask_message_file_reading, percent)));
                 if (isCancelled()) {
                     return null;
                 }
