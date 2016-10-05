@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private CsvFurnaceTemperatureTable table;
     private String filePath;
     private boolean isAsyncTaskRunning;
-    private String statusMessageSave = "";
 
     private ProgressBar progressBar;
     private TextView statusText;
@@ -50,22 +52,28 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private PhotoViewAttacher overviewZoomer;
     private ImageView graphConcreteImage;
     private PhotoViewAttacher concreteZoomer;
-    private Toolbar toolbar;
+    private RangeSeekBar rangeSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
 
         statusText = (TextView) findViewById(R.id.activity_main_value_status);
         progressBar = (ProgressBar) findViewById(R.id.activity_main_progress);
-
+        progressBar.getIndeterminateDrawable().setColorFilter(
+                ContextCompat.getColor(getApplicationContext(), R.color.colorAccent),
+                android.graphics.PorterDuff.Mode.SRC_IN);
         graphOverviewImage = (ImageView) findViewById(R.id.activity_main_graph_overview);
         graphConcreteImage = (ImageView) findViewById(R.id.activity_main_graph_concrete);
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
+        rangeSeekBar = (RangeSeekBar) findViewById(R.id.seekBar);
+        rangeSeekBar.setRangeValues(0, 1000);
+        rangeSeekBar.setSelectedMinValue(100);
+        rangeSeekBar.setSelectedMaxValue(900);
         loadSettings();
         updateFile();
     }
@@ -86,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private void updateFile() {
         if (filePath.isEmpty()) {
             statusText.setText(R.string.activity_main_message_error_empty_path);
-            //statusMessageSave = statusText.getText().toString();
             return;
         }
         updateGraphTask = new UpdateGraphTask(this, getApplicationContext());
@@ -135,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        //statusText.setText(statusMessageSave);
     }
 
     @Override
@@ -199,13 +205,11 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     public void onAsyncTaskProgressUpdate(ProgressResult result) {
         progressBar.setProgress(result.progressCurrent);
         statusText.setText(result.statusMessage);
-        //statusMessageSave = result.statusMessage;
     }
 
     @Override
     public void onAsyncTaskCancelled(CsvFurnaceTemperatureTable result) {
         statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
-        //statusMessageSave = statusText.getText().toString();
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
         isAsyncTaskRunning = false;
@@ -215,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     public void onAsyncTaskPostExecute(CsvFurnaceTemperatureTable result) {
         if (result != null) {
             statusText.setText(getString(R.string.asynctask_message_sync_time, getSyncTime()));
-            //statusMessageSave = statusText.getText().toString();
             table = result;
             //draw table
         }
