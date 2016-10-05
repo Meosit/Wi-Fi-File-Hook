@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private CsvFurnaceTemperatureTable table;
     private String filePath;
     private boolean isAsyncTaskRunning;
-    private String statusMessageSave;
+    private String statusMessageSave = "";
 
     private ProgressBar progressBar;
     private TextView statusText;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private void updateFile() {
         if (filePath.isEmpty()) {
             statusText.setText(R.string.activity_main_message_error_empty_path);
-            statusMessageSave = statusText.getText().toString();
+            //statusMessageSave = statusText.getText().toString();
             return;
         }
         updateGraphTask = new UpdateGraphTask(this, getApplicationContext());
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             updateGraphTask.cancel(true);
         } else {
             statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
-            statusMessageSave = statusText.getText().toString();
+            //statusMessageSave = statusText.getText().toString();
         }
     }
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        statusText.setText(statusMessageSave);
+        //statusText.setText(statusMessageSave);
     }
 
     @Override
@@ -192,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
         isShowConcreteFurnace = true;
-        updateMenuTitles();
         isAsyncTaskRunning = true;
     }
 
@@ -200,13 +199,13 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     public void onAsyncTaskProgressUpdate(ProgressResult result) {
         progressBar.setProgress(result.progressCurrent);
         statusText.setText(result.statusMessage);
-        statusMessageSave = result.statusMessage;
+        //statusMessageSave = result.statusMessage;
     }
 
     @Override
     public void onAsyncTaskCancelled(CsvFurnaceTemperatureTable result) {
         statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
-        statusMessageSave = statusText.getText().toString();
+        //statusMessageSave = statusText.getText().toString();
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
         isAsyncTaskRunning = false;
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     public void onAsyncTaskPostExecute(CsvFurnaceTemperatureTable result) {
         if (result != null) {
             statusText.setText(getString(R.string.asynctask_message_sync_time, getSyncTime()));
-            statusMessageSave = statusText.getText().toString();
+            //statusMessageSave = statusText.getText().toString();
             table = result;
             //draw table
         }
