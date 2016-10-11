@@ -9,7 +9,7 @@
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/activity.main.toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay" />
 
@@ -33,7 +33,7 @@
         android:text="Loading..."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         tools:ignore="HardcodedText" />
 
     <ProgressBar
@@ -47,7 +47,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/activity.main.toolbar"
         android:layout_marginBottom="-6dp"
-        android:layout_marginTop="-7dp"
+        android:layout_marginTop="-8dp"
         android:indeterminate="true"
         android:max="100"
         android:progress="50"
@@ -57,27 +57,27 @@
         android:id="@+id/activity.main.graph.overview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/activity.main.styling.status_separator"
-        android:scaleType="center"
-        android:src="@drawable/dummy" />
+        android:scaleType="centerInside"
+        android:src="@drawable/dummy_overview" />
 
     <ImageView
         android:id="@+id/activity.main.graph.concrete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/activity.main.styling.status_separator"
         android:scaleType="center"
-        android:src="@drawable/dummy"
+        android:src="@drawable/dummy_concrete"
         android:visibility="invisible" />
 
     <TextView
@@ -88,25 +88,21 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar"
+        android:layout_below="@+id/activity.main.value.status"
         android:background="@color/colorPrimary" />
 
     <org.florescu.android.rangeseekbar.RangeSeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/activity.main.scale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/activity.main.value.status"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        rsb:absoluteMaxValue="150"
-        rsb:absoluteMinValue="20"
+        android:layout_alignParentBottom="true"
+        rsb:absoluteMaxValue="1000"
+        rsb:absoluteMinValue="0"
         rsb:activateOnDefaultValues="true"
         rsb:activeColor="#3BB8E6"
-        rsb:barHeight="1dp"
+        rsb:barHeight="2dp"
+        rsb:internalPadding="1dp"
+        rsb:showLabels="false"
         rsb:textAboveThumbsColor="#3BB8E6" />
 
 </RelativeLayout>

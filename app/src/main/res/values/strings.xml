@@ -22,13 +22,13 @@
     <string name="settings.file_path.hint">192.168.1.1/Share/test.csv</string>
     <string name="settings.title">Settings</string>
     <string name="activity.main.message.info.settings_updated">Settings has been updated</string>
-    <string name="asynctask.message.error">"Error occurred: %1$s"</string>
-    <string name="asynctask.message.file_opened">Opening file… </string>
+    <string name="asynctask.message.error">"%1$s"</string>
+    <string name="asynctask.message.file_opening">Opening file… </string>
     <string name="asynctask.message.file_reading">Reading file… %1$d%%</string>
     <string name="asynctask.message.cancelled">Updating cancelled. Time: %1$s</string>
     <string name="asynctask.message.sync_time">"Synchronization time: %1$s"</string>
     <string name="asynctask.message.parsing_file">File is read. Start parsing file…</string>
-    <string name="activity.main.message.error.empty_path">Error occurred: Empty resource path.</string>
+    <string name="activity.main.message.error.empty_path">Error occurred: empty resource path.</string>
     <string name="menu.main.show_concrete_furnace.enable">Show concrete furnace graph</string>
     <string name="menu.main.show_concrete_furnace.disable">Show overview graph</string>
 </resources>

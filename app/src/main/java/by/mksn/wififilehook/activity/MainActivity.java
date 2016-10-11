@@ -3,11 +3,6 @@ package by.mksn.wififilehook.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +21,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import by.mksn.wififilehook.R;
-import by.mksn.wififilehook.logic.CsvFurnaceTemperatureTable;
+import by.mksn.wififilehook.logic.FurnacesStats;
+import by.mksn.wififilehook.logic.Graph;
 import by.mksn.wififilehook.logic.ProgressResult;
 import by.mksn.wififilehook.task.AsyncTaskCallback;
 import by.mksn.wififilehook.task.UpdateGraphTask;
@@ -34,7 +30,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, CsvFurnaceTemperatureTable> {
+public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats> {
 
     private static final String PREF_FILE_PATH = "file_path";
 
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private boolean isShowConcreteFurnace = true;
 
     private UpdateGraphTask updateGraphTask;
-    private CsvFurnaceTemperatureTable table;
+    private FurnacesStats table;
     private String filePath;
     private boolean isAsyncTaskRunning;
 
@@ -70,10 +66,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         graphConcreteImage = (ImageView) findViewById(R.id.activity_main_graph_concrete);
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
-        rangeSeekBar = (RangeSeekBar) findViewById(R.id.seekBar);
-        rangeSeekBar.setRangeValues(0, 1000);
-        rangeSeekBar.setSelectedMinValue(100);
-        rangeSeekBar.setSelectedMaxValue(900);
+        rangeSeekBar = (RangeSeekBar) findViewById(R.id.activity_main_scale);
         loadSettings();
         updateFile();
     }
@@ -101,21 +94,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     private void drawGraphOverview() {
-        //Create a new image bitmap and attach a brand new canvas to it
-        Bitmap graphBackground = BitmapFactory.decodeResource(getResources(), R.drawable.overview);
-        Bitmap tempGraph = Bitmap.createBitmap(graphBackground.getWidth(), graphBackground.getHeight(), Bitmap.Config.RGB_565);
-        Canvas tempCanvas = new Canvas(tempGraph);
+        Graph graph = new Graph(this, R.drawable.overview);
+        //graph.drawCircle(100, 100, 10, 0xFFFFFF);
 
-        //Draw the image bitmap into the canvas
-        tempCanvas.drawBitmap(graphBackground, 0, 0, null);
-
-        //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
-        Paint myPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        myPaint.setColor(0xFF00CC00);
-        tempCanvas.drawCircle(100, 100, 10, myPaint);
-
-        //Attach the canvas to the ImageView
-        graphOverviewImage.setImageDrawable(new BitmapDrawable(getResources(), tempGraph));
+        graphOverviewImage.setImageDrawable(graph.getResultBitmapDrawable());
         overviewZoomer.update();
     }
 
@@ -124,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             updateGraphTask.cancel(true);
         } else {
             statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
-            //statusMessageSave = statusText.getText().toString();
         }
     }
 
@@ -208,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onAsyncTaskCancelled(CsvFurnaceTemperatureTable result) {
+    public void onAsyncTaskCancelled(FurnacesStats result) {
         statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
@@ -216,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onAsyncTaskPostExecute(CsvFurnaceTemperatureTable result) {
+    public void onAsyncTaskPostExecute(FurnacesStats result) {
         if (result != null) {
             statusText.setText(getString(R.string.asynctask_message_sync_time, getSyncTime()));
             table = result;
