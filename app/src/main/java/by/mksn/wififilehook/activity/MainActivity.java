@@ -3,6 +3,7 @@ package by.mksn.wififilehook.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,12 +34,14 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats> {
 
     private static final String PREF_FILE_PATH = "file_path";
+    private static final String PREF_TEXT_COLOR = "text_color";
+    private static final String PREF_DRAW_COLOR = "draw_color";
 
     private Menu menu;
     private boolean isShowConcreteFurnace = true;
 
     private UpdateGraphTask updateGraphTask;
-    private FurnacesStats table;
+    private FurnacesStats furnacesStats;
     private String filePath;
     private boolean isAsyncTaskRunning;
 
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
+        Graph.setDrawDefaultColor(sharedPreferences.getInt(PREF_DRAW_COLOR, Color.WHITE));
+        Graph.setTextDefaultColor(sharedPreferences.getInt(PREF_TEXT_COLOR, Color.WHITE));
         filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
     }
 
@@ -95,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void drawGraphOverview() {
         Graph graph = new Graph(this, R.drawable.overview);
-        //graph.drawCircle(100, 100, 10, 0xFFFFFF);
-
+        graph.setScale(0, 1200);
+        graph.drawOverviewGraph(furnacesStats.getTimestamp(furnacesStats.getTimestampCount() - 1).getValues(), 20);
         graphOverviewImage.setImageDrawable(graph.getResultBitmapDrawable());
         overviewZoomer.update();
     }
@@ -200,8 +205,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     public void onAsyncTaskPostExecute(FurnacesStats result) {
         if (result != null) {
             statusText.setText(getString(R.string.asynctask_message_sync_time, getSyncTime()));
-            table = result;
-            //draw table
+            furnacesStats = result;
+            drawGraphOverview();
         }
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);

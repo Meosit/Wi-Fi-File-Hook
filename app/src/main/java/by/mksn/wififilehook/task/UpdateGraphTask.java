@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.logic.FurnacesStats;
 import by.mksn.wififilehook.logic.ProgressResult;
+import by.mksn.wififilehook.logic.exception.CsvParseException;
 import jcifs.smb.SmbFile;
 
 public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesStats> {
@@ -44,9 +45,14 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
             return new FurnacesStats(readFile);
-        } catch (Exception e) {
+
+        } catch (CsvParseException e) {
             publishProgress(new ProgressResult(maxProgressValue,
                     context.getString(R.string.asynctask_message_error, e.getMessage())));
+            return null;
+        } catch (Exception e) {
+            publishProgress(new ProgressResult(maxProgressValue,
+                    context.getString(R.string.asynctask_message_error, "File reading error" + e.getMessage())));
             return null;
         }
     }
@@ -57,11 +63,11 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         ArrayList<String> result = new ArrayList<>();
         String readLine;
         try {
-            int full = stream.available();
+            //int full = stream.available();
             while ((readLine = reader.readLine()) != null) {
                 result.add(readLine);
-                int percent = Math.round((1 - stream.available() / full) * 100);
-                publishProgress(new ProgressResult(percent, context.getString(R.string.asynctask_message_file_reading, percent)));
+                //int percent = Math.round((1 - stream.available() / full) * 100);
+                //publishProgress(new ProgressResult(percent, context.getString(R.string.asynctask_message_file_reading, percent)));
                 if (isCancelled()) {
                     return null;
                 }
@@ -69,7 +75,7 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         } finally {
             reader.close();
         }
-        return (String[]) result.toArray();
+        return result.toArray(new String[result.size()]);
     }
 
     @Override

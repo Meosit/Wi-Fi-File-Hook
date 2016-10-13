@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <EditTextPreference
+        android:hint="@string/settings.file_path.hint"
         android:key="file_path"
         android:summary="@string/settings.file_path.summary"
-        android:title="@string/settings.file_path.title"
-        android:hint="@string/settings.file_path.hint"/>
+        android:title="@string/settings.file_path.title" />
+    <com.rarepebble.colorpicker.ColorPreference
+        android:defaultValue="#ffffff"
+        android:key="text_color"
+        android:summary="Color of text captions on graph"
+        android:title="Text color"
+        app:colorpicker_showAlpha="false"
+        app:colorpicker_showHex="true" />
+    <com.rarepebble.colorpicker.ColorPreference
+        android:defaultValue="#ffffff"
+        android:key="draw_color"
+        android:summary="Color of lines on graph"
+        android:title="Draw color"
+        app:colorpicker_showAlpha="false"
+        app:colorpicker_showHex="true" />
 </PreferenceScreen>
