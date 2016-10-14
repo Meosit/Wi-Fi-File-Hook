@@ -7,24 +7,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.logic.FurnacesStats;
 import by.mksn.wififilehook.logic.ProgressResult;
 import by.mksn.wififilehook.logic.exception.CsvParseException;
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
 public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesStats> {
 
 
-    private int maxProgressValue = 100;
+    private static final int MAX_PROGRESS_RESULT = 100;
     private AsyncTaskCallback<ProgressResult, FurnacesStats> callback;
     private Context context;
+    private NtlmPasswordAuthentication auth;
 
-    public UpdateGraphTask(AsyncTaskCallback<ProgressResult, FurnacesStats> callback, Context context) {
+    public UpdateGraphTask(AsyncTaskCallback<ProgressResult, FurnacesStats> callback, Context context, NtlmPasswordAuthentication auth) {
         this.callback = callback;
         this.context = context;
+        this.auth = auth;
     }
 
     @Override
@@ -36,7 +41,11 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
     protected FurnacesStats doInBackground(String... strings) {
         SmbFile smbFile;
         try {
-            smbFile = new SmbFile("smb://" + strings[0]);
+            if (auth == null) {
+                smbFile = new SmbFile("smb://" + strings[0]);
+            } else {
+                smbFile = new SmbFile("smb://" + strings[0], auth);
+            }
             publishProgress(new ProgressResult(1,
                     context.getString(R.string.asynctask_message_file_opening)));
             String[] readFile = readFileContent(smbFile);
@@ -45,13 +54,12 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
             return new FurnacesStats(readFile);
-
-        } catch (CsvParseException e) {
-            publishProgress(new ProgressResult(maxProgressValue,
+        } catch (SmbException | MalformedURLException | CsvParseException e) {
+            publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.asynctask_message_error, e.getMessage())));
             return null;
         } catch (Exception e) {
-            publishProgress(new ProgressResult(maxProgressValue,
+            publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.asynctask_message_error, "File reading error" + e.getMessage())));
             return null;
         }
@@ -63,11 +71,8 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         ArrayList<String> result = new ArrayList<>();
         String readLine;
         try {
-            //int full = stream.available();
             while ((readLine = reader.readLine()) != null) {
                 result.add(readLine);
-                //int percent = Math.round((1 - stream.available() / full) * 100);
-                //publishProgress(new ProgressResult(percent, context.getString(R.string.asynctask_message_file_reading, percent)));
                 if (isCancelled()) {
                     return null;
                 }

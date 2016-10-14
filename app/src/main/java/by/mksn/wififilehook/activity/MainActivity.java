@@ -27,6 +27,7 @@ import by.mksn.wififilehook.logic.Graph;
 import by.mksn.wififilehook.logic.ProgressResult;
 import by.mksn.wififilehook.task.AsyncTaskCallback;
 import by.mksn.wififilehook.task.UpdateGraphTask;
+import jcifs.smb.NtlmPasswordAuthentication;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -35,7 +36,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private static final String PREF_FILE_PATH = "file_path";
     private static final String PREF_TEXT_COLOR = "text_color";
+    private static final String PREF_TEXT_SIZE = "text_size";
     private static final String PREF_DRAW_COLOR = "draw_color";
+    private static final String PREF_USERNAME = "username";
+    private static final String PREF_PASSWORD = "password";
 
     private Menu menu;
     private boolean isShowConcreteFurnace = true;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private FurnacesStats furnacesStats;
     private String filePath;
     private boolean isAsyncTaskRunning;
+    private NtlmPasswordAuthentication auth;
 
     private ProgressBar progressBar;
     private TextView statusText;
@@ -86,7 +91,15 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
         Graph.setDrawDefaultColor(sharedPreferences.getInt(PREF_DRAW_COLOR, Color.WHITE));
         Graph.setTextDefaultColor(sharedPreferences.getInt(PREF_TEXT_COLOR, Color.WHITE));
+        Graph.setTextSizeDefault(sharedPreferences.getInt(PREF_TEXT_SIZE, 30));
         filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
+        String username = sharedPreferences.getString(PREF_USERNAME, "");
+        String password = sharedPreferences.getString(PREF_PASSWORD, "");
+        if (username.isEmpty() || password.isEmpty()) {
+            auth = null;
+        } else {
+            auth = new NtlmPasswordAuthentication("", username, password);
+        }
     }
 
     private void updateFile() {
@@ -94,14 +107,13 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             statusText.setText(R.string.activity_main_message_error_empty_path);
             return;
         }
-        updateGraphTask = new UpdateGraphTask(this, getApplicationContext());
+        updateGraphTask = new UpdateGraphTask(this, getApplicationContext(), auth);
         updateGraphTask.execute(filePath);
     }
 
     private void drawGraphOverview() {
         Graph graph = new Graph(this, R.drawable.overview);
-        graph.setScale(0, 1200);
-        graph.drawOverviewGraph(furnacesStats.getTimestamp(furnacesStats.getTimestampCount() - 1).getValues(), 20);
+        graph.drawOverviewGraph(furnacesStats.getTimestamp(furnacesStats.getTimestampCount() - 1));
         graphOverviewImage.setImageDrawable(graph.getResultBitmapDrawable());
         overviewZoomer.update();
     }
@@ -170,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        loadSettings();
         if (resultCode == RESULT_OK) {
-            loadSettings();
             Toast.makeText(getApplicationContext(),
                     R.string.activity_main_message_info_settings_updated, Toast.LENGTH_LONG).show();
         }

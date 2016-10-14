@@ -9,6 +9,7 @@ import by.mksn.wififilehook.logic.exception.IllegalValueIndexException;
 
 public final class FurnacesStats {
 
+    public static final int TEMPERATURE_SENSOR_COUNT = 31;
     private final ValuesTimestamp[] timestamps;
     private final int maxValue;
     private final int minValue;
@@ -77,18 +78,34 @@ public final class FurnacesStats {
         return timestamps[index];
     }
 
-    public int[] getConcreteIndexAllValues(int index) {
+    public TimeValue[] getConcreteIndexAllTimeValues(int index) {
         if (index < 0 || index >= timestamps.length) {
             throw new IllegalValueIndexException();
         }
-        int[] values = new int[timestamps.length];
+        TimeValue[] values = new TimeValue[timestamps.length];
         for (int i = 0; i < values.length; i++) {
-            values[i] = timestamps[i].getValue(index);
+            values[i] = new TimeValue(timestamps[i].time, timestamps[i].getValue(index));
         }
         return values;
     }
 
-    public class ValuesTimestamp implements Comparable<ValuesTimestamp> {
+    public final class TimeValue implements Comparable<TimeValue> {
+
+        public final String time;
+        public final int value;
+
+        public TimeValue(String time, int value) {
+            this.time = time;
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(TimeValue timeValue) {
+            return time.compareTo(timeValue.time);
+        }
+    }
+
+    public final class ValuesTimestamp implements Comparable<ValuesTimestamp> {
 
         public final String time;
         private final int values[];
