@@ -219,10 +219,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         loadSettings();
-        if (resultCode == RESULT_OK) {
-            Toast.makeText(getApplicationContext(),
-                    R.string.activity_main_message_info_settings_updated, Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
