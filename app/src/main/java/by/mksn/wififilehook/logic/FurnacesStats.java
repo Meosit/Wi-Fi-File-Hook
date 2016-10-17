@@ -59,6 +59,14 @@ public final class FurnacesStats {
         }
     }
 
+    public static int timeToSeconds(String time) {
+        String[] args = time.split(":");
+        if (args.length != 3) {
+            throw new IllegalArgumentException("Not time string passed");
+        }
+        return Integer.parseInt(args[0]) * 3600 + Integer.parseInt(args[1]) * 60 + Integer.parseInt(args[2]);
+    }
+
     public int getMaxValue() {
         return maxValue;
     }

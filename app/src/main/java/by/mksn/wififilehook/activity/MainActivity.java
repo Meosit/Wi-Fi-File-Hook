@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import by.mksn.wififilehook.R;
+import by.mksn.wififilehook.dialog.ConcreteIndexDialog;
 import by.mksn.wififilehook.logic.FurnacesStats;
 import by.mksn.wififilehook.logic.Graph;
 import by.mksn.wififilehook.logic.ProgressResult;
@@ -32,23 +33,28 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats> {
+@SuppressWarnings("unchecked")
+public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.ConcreteIndexDialogCallback {
 
     private static final String PREF_FILE_PATH = "file_path";
-    private static final String PREF_TEXT_COLOR = "text_color";
-    private static final String PREF_TEXT_SIZE = "text_size";
-    private static final String PREF_DRAW_COLOR = "draw_color";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
+    private static final String PREF_OVERVIEW_TEXT_COLOR = "overview_text_color";
+    private static final String PREF_OVERVIEW_TEXT_SIZE = "overview_text_size";
+    private static final String PREF_OVERVIEW_DRAW_COLOR = "overview_draw_color";
+    private static final String PREF_CONCRETE_TEXT_COLOR = "concrete_text_color";
+    private static final String PREF_CONCRETE_TEXT_SIZE = "concrete_text_size";
+    private static final String PREF_CONCRETE_DRAW_COLOR = "concrete_draw_color";
 
     private Menu menu;
-    private boolean isShowConcreteFurnace = true;
+    private boolean isConcreteGraphVisible = false;
 
     private UpdateGraphTask updateGraphTask;
     private FurnacesStats furnacesStats;
     private String filePath;
     private boolean isAsyncTaskRunning;
     private NtlmPasswordAuthentication auth;
+    private int concreteFurnaceIndex;
 
     private ProgressBar progressBar;
     private TextView statusText;
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private PhotoViewAttacher overviewZoomer;
     private ImageView graphConcreteImage;
     private PhotoViewAttacher concreteZoomer;
-    private RangeSeekBar rangeSeekBar;
+    private RangeSeekBar<Integer> timeRangeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +80,17 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         graphConcreteImage = (ImageView) findViewById(R.id.activity_main_graph_concrete);
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
-        rangeSeekBar = (RangeSeekBar) findViewById(R.id.activity_main_scale);
+        timeRangeBar = (RangeSeekBar<Integer>) findViewById(R.id.activity_main_time_range);
+        timeRangeBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
+                if (!minValue.equals(maxValue)) {
+                    drawGraphConcrete(concreteFurnaceIndex, ((Integer) minValue), ((Integer) maxValue));
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.activity_main_message_warning_range, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         loadSettings();
         updateFile();
     }
@@ -89,9 +105,12 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
-        Graph.setDrawDefaultColor(sharedPreferences.getInt(PREF_DRAW_COLOR, Color.WHITE));
-        Graph.setTextDefaultColor(sharedPreferences.getInt(PREF_TEXT_COLOR, Color.WHITE));
-        Graph.setTextSizeDefault(sharedPreferences.getInt(PREF_TEXT_SIZE, 30));
+        Graph.setOverviewDrawDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_DRAW_COLOR, Color.WHITE));
+        Graph.setOverviewTextDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_COLOR, Color.YELLOW));
+        Graph.setOverviewTextSizeDefault(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_SIZE, 30));
+        Graph.setConcreteDrawDefaultColor(sharedPreferences.getInt(PREF_CONCRETE_DRAW_COLOR, Color.WHITE));
+        Graph.setConcreteTextDefaultColor(sharedPreferences.getInt(PREF_CONCRETE_TEXT_COLOR, Color.YELLOW));
+        Graph.setConcreteTextSizeDefault(sharedPreferences.getInt(PREF_CONCRETE_TEXT_SIZE, 30));
         filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
         String username = sharedPreferences.getString(PREF_USERNAME, "");
         String password = sharedPreferences.getString(PREF_PASSWORD, "");
@@ -99,6 +118,27 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             auth = null;
         } else {
             auth = new NtlmPasswordAuthentication("", username, password);
+        }
+    }
+
+    private void switchToLayout(boolean isConcrete) {
+        if (menu != null) {
+            MenuItem showFurnaceMenuItem = menu.findItem(R.id.action_show_concrete);
+            if (isConcrete) {
+                showFurnaceMenuItem.setTitle(R.string.menu_main_concrete_furnace_visible);
+                showFurnaceMenuItem.setIcon(R.drawable.ic_overview);
+                graphConcreteImage.setVisibility(View.VISIBLE);
+                graphOverviewImage.setVisibility(View.INVISIBLE);
+                timeRangeBar.setVisibility(View.VISIBLE);
+                timeRangeBar.setSelectedMinValue(0);
+                timeRangeBar.setSelectedMaxValue(24);
+            } else {
+                showFurnaceMenuItem.setTitle(R.string.menu_main_concrete_furnace_invisible);
+                showFurnaceMenuItem.setIcon(R.drawable.ic_concrete);
+                graphConcreteImage.setVisibility(View.INVISIBLE);
+                graphOverviewImage.setVisibility(View.VISIBLE);
+                timeRangeBar.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -118,22 +158,18 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         overviewZoomer.update();
     }
 
+    private void drawGraphConcrete(int furnaceIndex, int minHour, int maxHour) {
+        Graph graph = new Graph(this, R.drawable.concrete);
+        graph.drawConcreteGraph(furnacesStats.getConcreteIndexAllTimeValues(furnaceIndex), minHour, maxHour);
+        graphConcreteImage.setImageDrawable(graph.getResultBitmapDrawable());
+        concreteZoomer.update();
+    }
+
     private void stopUpdating() {
         if (isAsyncTaskRunning) {
             updateGraphTask.cancel(true);
         } else {
             statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
-        }
-    }
-
-    private void updateMenuTitles() {
-        MenuItem showFurnaceMenuItem = menu.findItem(R.id.action_show_concrete);
-        if (isShowConcreteFurnace) {
-            isShowConcreteFurnace = false;
-            showFurnaceMenuItem.setTitle(R.string.menu_main_show_concrete_furnace_disable);
-        } else {
-            isShowConcreteFurnace = true;
-            showFurnaceMenuItem.setTitle(R.string.menu_main_show_concrete_furnace_enable);
         }
     }
 
@@ -158,16 +194,16 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                         SettingsActivity.REQUEST_CODE);
                 return true;
             case R.id.action_show_concrete:
-                if (isShowConcreteFurnace) {
-                    graphConcreteImage.setVisibility(View.VISIBLE);
-                    graphOverviewImage.setVisibility(View.INVISIBLE);
-
-                    //draw concrete furnace
+                if (furnacesStats != null) {
+                    if (isConcreteGraphVisible) {
+                        switchToLayout(false);
+                        isConcreteGraphVisible = false;
+                    } else {
+                        ConcreteIndexDialog.newInstance(this).show(getSupportFragmentManager(), "IndexPicker");
+                    }
                 } else {
-                    graphConcreteImage.setVisibility(View.INVISIBLE);
-                    graphOverviewImage.setVisibility(View.VISIBLE);
+                    Toast.makeText(this, R.string.activity_main_message_warning_switch, Toast.LENGTH_LONG).show();
                 }
-                updateMenuTitles();
                 return true;
             case R.id.action_stop:
                 stopUpdating();
@@ -191,11 +227,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     @Override
     public void onAsyncTaskPreExecute() {
-        graphConcreteImage.setVisibility(View.INVISIBLE);
-        graphOverviewImage.setVisibility(View.VISIBLE);
+        isConcreteGraphVisible = false;
+        switchToLayout(false);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
-        isShowConcreteFurnace = true;
         isAsyncTaskRunning = true;
     }
 
@@ -223,5 +258,19 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
         isAsyncTaskRunning = false;
+    }
+
+    @Override
+    public void onPositiveClick(int index) {
+        concreteFurnaceIndex = index;
+        switchToLayout(true);
+        isConcreteGraphVisible = true;
+        drawGraphConcrete(concreteFurnaceIndex, 0, 24);
+    }
+
+    @Override
+    public void onNegativeClick() {
+        switchToLayout(false);
+        isConcreteGraphVisible = false;
     }
 }

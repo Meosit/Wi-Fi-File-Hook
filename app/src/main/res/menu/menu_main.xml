@@ -14,7 +14,7 @@
         android:id="@+id/action_show_concrete"
         android:icon="@drawable/ic_concrete"
         android:orderInCategory="300"
-        android:title="@string/menu.main.show_concrete_furnace.enable"
+        android:title="@string/menu.main.concrete_furnace.invisible"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_stop"

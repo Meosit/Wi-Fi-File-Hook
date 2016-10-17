@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog.concrete_index.title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:padding="10dp"
+        android:text="@string/dialog.concrete_index.title"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/dialog.concrete_index.message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog.concrete_index.title"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingTop="10dp"
+        android:text="@string/dialog.concrete_index.message"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
+
+    <com.wefika.horizontalpicker.HorizontalPicker
+        android:id="@+id/dialog.concrete_index.index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView2"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="2"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/dialog.concrete_index.styling.separator"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:background="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog.concrete_index.index"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-25dp"
+        android:text="▲"
+        android:textColor="@color/colorAccent"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog.concrete_index.message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-20dp"
+        android:text="▼"
+        android:textColor="@color/colorAccent"
+        android:textSize="22sp" />
+</RelativeLayout>

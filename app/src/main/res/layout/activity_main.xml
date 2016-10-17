@@ -92,19 +92,18 @@
         android:background="@color/colorPrimary" />
 
     <org.florescu.android.rangeseekbar.RangeSeekBar
-        android:id="@+id/activity.main.scale"
+        android:id="@+id/activity.main.time_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:visibility="invisible"
-        rsb:absoluteMaxValue="1000"
+        rsb:absoluteMaxValue="24"
         rsb:absoluteMinValue="0"
         rsb:activateOnDefaultValues="true"
-        rsb:activeColor="#3BB8E6"
+        rsb:activeColor="@color/colorAccent"
         rsb:barHeight="2dp"
         rsb:internalPadding="1dp"
         rsb:showLabels="false"
-        rsb:singleThumb="true"
-        rsb:textAboveThumbsColor="#3BB8E6" />
+        rsb:textAboveThumbsColor="@color/colorAccent" />
 
 </RelativeLayout>
