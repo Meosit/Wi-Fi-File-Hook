@@ -52,4 +52,9 @@
     <string name="dialog.concrete_index.negative">Cancel</string>
     <string name="activity.main.message.warning.switch">Cannot switch to concrete graph without synchronization</string>
     <string name="activity.main.message.warning.range">Minimum time range: 1 hour</string>
+    <string name="settings.overview_column_width.title">Column width</string>
+    <string name="settings.overview_column_width.summary">Width of drawing color</string>
+    <string name="settings.concrete_line_width.title">Between dots line width</string>
+    <string name="settings.concrete_dot_radius.title">Dot radius</string>
+    <string name="settings.graph_customization.title">Graph customization</string>
 </resources>

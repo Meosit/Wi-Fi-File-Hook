@@ -42,9 +42,12 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private static final String PREF_OVERVIEW_TEXT_COLOR = "overview_text_color";
     private static final String PREF_OVERVIEW_TEXT_SIZE = "overview_text_size";
     private static final String PREF_OVERVIEW_DRAW_COLOR = "overview_draw_color";
+    private static final String PREF_OVERVIEW_COLUMN_WIDTH = "overview_column_width";
     private static final String PREF_CONCRETE_TEXT_COLOR = "concrete_text_color";
     private static final String PREF_CONCRETE_TEXT_SIZE = "concrete_text_size";
     private static final String PREF_CONCRETE_DRAW_COLOR = "concrete_draw_color";
+    private static final String PREF_CONCRETE_DOT_RADIUS = "concrete_dot_radius";
+    private static final String PREF_CONCRETE_LINE_WIDTH = "concrete_line_width";
 
     private Menu menu;
     private boolean isConcreteGraphVisible = false;
@@ -111,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         Graph.setConcreteDrawDefaultColor(sharedPreferences.getInt(PREF_CONCRETE_DRAW_COLOR, Color.WHITE));
         Graph.setConcreteTextDefaultColor(sharedPreferences.getInt(PREF_CONCRETE_TEXT_COLOR, Color.YELLOW));
         Graph.setConcreteTextSizeDefault(sharedPreferences.getInt(PREF_CONCRETE_TEXT_SIZE, 30));
+        Graph.setDefaultDotRadius(sharedPreferences.getInt(PREF_CONCRETE_DOT_RADIUS, 8));
+        Graph.setDefaultLineWidth(sharedPreferences.getInt(PREF_CONCRETE_LINE_WIDTH, 4));
+        Graph.setDefaultColumnWidth(sharedPreferences.getInt(PREF_OVERVIEW_COLUMN_WIDTH, 10));
         filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
         String username = sharedPreferences.getString(PREF_USERNAME, "");
         String password = sharedPreferences.getString(PREF_PASSWORD, "");

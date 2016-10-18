@@ -16,9 +16,6 @@ import by.mksn.wififilehook.R;
 
 public final class Graph {
 
-    private static final int DEFAULT_COLUMN_WIDTH = 10;
-    private static final int DEFAULT_DOT_RADIUS = 2;
-
     private static final int OVERVIEW_HORIZONTAL_LINES_COUNT = 12;
     private static final int OVERVIEW_WIDTH = 1009;
     private static final int OVERVIEW_HEIGHT = 409;
@@ -26,7 +23,6 @@ public final class Graph {
     private static final int OVERVIEW_GRAPH_DRAW_HEIGHT = 377;
     private static final int OVERVIEW_GRAPH_DRAW_OFFSET_TOP = 12;
     private static final int OVERVIEW_GRAPH_DRAW_OFFSET_LEFT = 35;
-
     private static final int CONCRETE_HORIZONTAL_LINES_COUNT = 48;
     private static final int CONCRETE_WIDTH = 881;
     private static final int CONCRETE_HEIGHT = 625;
@@ -34,7 +30,9 @@ public final class Graph {
     private static final int CONCRETE_GRAPH_DRAW_OFFSET_LEFT = 41;
     private static final int CONCRETE_GRAPH_DRAW_WIDTH = 822;
     private static final int CONCRETE_GRAPH_DRAW_HEIGHT = 581;
-
+    private static int defaultColumnWidth = 10;
+    private static int defaultDotRadius = 8;
+    private static int defaultLineWidth = 4;
     private static int overviewTextSizeDefault = 30;
     private static int overviewTextDefaultColor = Color.YELLOW;
     private static int overviewDrawDefaultColor = Color.WHITE;
@@ -119,6 +117,18 @@ public final class Graph {
         Graph.concreteTextSizeDefault = concreteTextSizeDefault;
     }
 
+    public static void setDefaultColumnWidth(int defaultColumnWidth) {
+        Graph.defaultColumnWidth = defaultColumnWidth;
+    }
+
+    public static void setDefaultDotRadius(int defaultDotRadius) {
+        Graph.defaultDotRadius = defaultDotRadius;
+    }
+
+    public static void setDefaultLineWidth(int defaultLineWidth) {
+        Graph.defaultLineWidth = defaultLineWidth;
+    }
+
     private float getNormalizedX(float x) {
         return x + drawOffsetLeft;
     }
@@ -197,8 +207,8 @@ public final class Graph {
             values[i] = timeValue.value;
         }
 
-        float dotRadius = drawWidth / CONCRETE_WIDTH * DEFAULT_DOT_RADIUS;
-        float lineWidth = drawWidth / CONCRETE_WIDTH;
+        float dotRadius = drawWidth / CONCRETE_WIDTH * (defaultDotRadius / 4);
+        float lineWidth = drawWidth / CONCRETE_WIDTH * (defaultLineWidth / 4);
         float textMargin = textPaint.measureText("0") / 2;
         int minValue = calculateMinConcreteValue(values);
         int maxValue = calculateMaxConcreteValue(values);
@@ -240,7 +250,7 @@ public final class Graph {
     }
 
     public void drawOverviewGraph(FurnacesStats.ValuesTimestamp timestamp) {
-        float columnWidth = drawWidth / OVERVIEW_WIDTH * DEFAULT_COLUMN_WIDTH;
+        float columnWidth = drawWidth / OVERVIEW_WIDTH * defaultColumnWidth;
         float textMargin = textPaint.measureText("0") / 2;
         int minValue = 0;
         int maxValue = calculateMaxOverviewValue(Arrays.copyOf(timestamp.getValues(), FurnacesStats.TEMPERATURE_SENSOR_COUNT));

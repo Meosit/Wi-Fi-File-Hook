@@ -20,50 +20,74 @@
             android:summary="@string/settings.password.summary"
             android:title="@string/settings.password.title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings.overview.title">
-        <com.rarepebble.colorpicker.ColorPreference
-            android:defaultValue="#ffffff"
-            android:key="overview_draw_color"
-            android:summary="@string/settings.draw_color.summary"
-            android:title="@string/settings.draw_color.title"
-            app:colorpicker_showAlpha="false"
-            app:colorpicker_showHex="true" />
-        <com.rarepebble.colorpicker.ColorPreference
-            android:defaultValue="#ffffff"
-            android:key="overview_text_color"
-            android:summary="@string/settings.text_color.summary"
-            android:title="@string/settings.text_color.title"
-            app:colorpicker_showAlpha="false"
-            app:colorpicker_showHex="true" />
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="30"
-            android:key="overview_text_size"
-            android:summary="@string/settings.text_size.summary"
-            android:title="@string/settings.text_size.title"
-            app:vnt_minValue="1"
-            app:vnt_setWrapSelectorWheel="true" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings.concrete.title">
-        <com.rarepebble.colorpicker.ColorPreference
-            android:defaultValue="#ffffff"
-            android:key="concrete_draw_color"
-            android:summary="@string/settings.draw_color.summary"
-            android:title="@string/settings.draw_color.title"
-            app:colorpicker_showAlpha="false"
-            app:colorpicker_showHex="true" />
-        <com.rarepebble.colorpicker.ColorPreference
-            android:defaultValue="#ffffff"
-            android:key="concrete_text_color"
-            android:summary="@string/settings.text_color.summary"
-            android:title="@string/settings.text_color.title"
-            app:colorpicker_showAlpha="false"
-            app:colorpicker_showHex="true" />
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="30"
-            android:key="concrete_text_size"
-            android:summary="@string/settings.text_size.summary"
-            android:title="@string/settings.text_size.title"
-            app:vnt_minValue="1"
-            app:vnt_setWrapSelectorWheel="true" />
+    <PreferenceCategory android:title="@string/settings.graph_customization.title">
+        <PreferenceScreen android:title="@string/settings.overview.title">
+            <com.rarepebble.colorpicker.ColorPreference
+                android:defaultValue="#ffffff"
+                android:key="overview_draw_color"
+                android:summary="@string/settings.draw_color.summary"
+                android:title="@string/settings.draw_color.title"
+                app:colorpicker_showAlpha="false"
+                app:colorpicker_showHex="true" />
+            <com.rarepebble.colorpicker.ColorPreference
+                android:defaultValue="#ffffff"
+                android:key="overview_text_color"
+                android:summary="@string/settings.text_color.summary"
+                android:title="@string/settings.text_color.title"
+                app:colorpicker_showAlpha="false"
+                app:colorpicker_showHex="true" />
+            <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+                android:defaultValue="30"
+                android:key="overview_text_size"
+                android:summary="@string/settings.text_size.summary"
+                android:title="@string/settings.text_size.title"
+                app:vnt_minValue="1"
+                app:vnt_setWrapSelectorWheel="true" />
+            <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+                android:defaultValue="10"
+                android:key="overview_line_width"
+                android:summary="@string/settings.overview_column_width.summary"
+                android:title="@string/settings.overview_column_width.title"
+                app:vnt_maxValue="20"
+                app:vnt_minValue="1"
+                app:vnt_setWrapSelectorWheel="true" />
+        </PreferenceScreen>
+        <PreferenceScreen android:title="@string/settings.concrete.title">
+            <com.rarepebble.colorpicker.ColorPreference
+                android:defaultValue="#ffffff"
+                android:key="concrete_draw_color"
+                android:summary="@string/settings.draw_color.summary"
+                android:title="@string/settings.draw_color.title"
+                app:colorpicker_showAlpha="false"
+                app:colorpicker_showHex="true" />
+            <com.rarepebble.colorpicker.ColorPreference
+                android:defaultValue="#ffffff"
+                android:key="concrete_text_color"
+                android:summary="@string/settings.text_color.summary"
+                android:title="@string/settings.text_color.title"
+                app:colorpicker_showAlpha="false"
+                app:colorpicker_showHex="true" />
+            <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+                android:defaultValue="30"
+                android:key="concrete_text_size"
+                android:summary="@string/settings.text_size.summary"
+                android:title="@string/settings.text_size.title"
+                app:vnt_minValue="1"
+                app:vnt_setWrapSelectorWheel="true" />
+            <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+                android:defaultValue="4"
+                android:key="concrete_line_width"
+                android:title="@string/settings.concrete_line_width.title"
+                app:vnt_maxValue="20"
+                app:vnt_minValue="0"
+                app:vnt_setWrapSelectorWheel="true" />
+            <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+                android:defaultValue="8"
+                android:key="concrete_dot_radius"
+                android:title="@string/settings.concrete_dot_radius.title"
+                app:vnt_maxValue="20"
+                app:vnt_minValue="1"
+                app:vnt_setWrapSelectorWheel="true" />
+        </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>
