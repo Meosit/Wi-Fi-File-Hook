@@ -57,4 +57,6 @@
     <string name="settings.concrete_line_width.title">Between dots line width</string>
     <string name="settings.concrete_dot_radius.title">Dot radius</string>
     <string name="settings.graph_customization.title">Graph customization</string>
+    <string name="settings.sensor_count.title">Sensor count</string>
+    <string name="settings.sensor_count.summary">Number of sensors to draw on overview graph</string>
 </resources>

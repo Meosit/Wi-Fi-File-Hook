@@ -19,6 +19,13 @@
             android:key="password"
             android:summary="@string/settings.password.summary"
             android:title="@string/settings.password.title" />
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="31"
+            android:key="sensor_count"
+            android:summary="@string/settings.sensor_count.summary"
+            android:title="@string/settings.sensor_count.title"
+            app:vnt_minValue="1"
+            app:vnt_setWrapSelectorWheel="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings.graph_customization.title">
         <PreferenceScreen android:title="@string/settings.overview.title">

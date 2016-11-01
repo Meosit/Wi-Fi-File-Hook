@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private static final String PREF_FILE_PATH = "file_path";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
+    private static final String PREF_SENSOR_COUNT = "sensor_count";
     private static final String PREF_OVERVIEW_TEXT_COLOR = "overview_text_color";
     private static final String PREF_OVERVIEW_TEXT_SIZE = "overview_text_size";
     private static final String PREF_OVERVIEW_DRAW_COLOR = "overview_draw_color";
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
+        FurnacesStats.setTemperatureSensorCount(sharedPreferences.getInt(PREF_SENSOR_COUNT, 31));
         Graph.setOverviewDrawDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_DRAW_COLOR, Color.WHITE));
         Graph.setOverviewTextDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_COLOR, Color.YELLOW));
         Graph.setOverviewTextSizeDefault(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_SIZE, 30));

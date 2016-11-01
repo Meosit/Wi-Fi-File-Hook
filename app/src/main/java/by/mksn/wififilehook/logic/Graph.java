@@ -197,7 +197,11 @@ public final class Graph {
                 break;
             }
         }
+
         timeValues = Arrays.copyOfRange(timeValues, minIndex, maxIndex);
+        if (timeValues.length == 0) {
+            return;
+        }
 
         int[] values = new int[timeValues.length];
         String[] times = new String[timeValues.length];
@@ -224,7 +228,9 @@ public final class Graph {
             int timeInSeconds = FurnacesStats.timeToSeconds(times[i]) - minTimeInSeconds;
             float valueY = (values[i] - minValue) * scaleRatio;
             float valueX = timeInSeconds * secondInPixels;
-            drawLine(oldValueX, oldValueY, valueX, valueY, lineWidth);
+            if (((valueX - oldValueX) / secondInPixels) <= FurnacesStats.GRAPH_BREAK_SECOND_RANGE) {
+                drawLine(oldValueX, oldValueY, valueX, valueY, lineWidth);
+            }
             drawCircle(valueX, valueY, dotRadius);
             oldValueY = valueY;
             oldValueX = valueX;
@@ -250,16 +256,19 @@ public final class Graph {
     }
 
     public void drawOverviewGraph(FurnacesStats.ValuesTimestamp timestamp) {
+        int actualSensorCount = (FurnacesStats.getTemperatureSensorCount() > timestamp.getValueCount()) ?
+                timestamp.getValueCount() :
+                FurnacesStats.getTemperatureSensorCount();
         float columnWidth = drawWidth / OVERVIEW_WIDTH * defaultColumnWidth;
         float textMargin = textPaint.measureText("0") / 2;
         int minValue = 0;
-        int maxValue = calculateMaxOverviewValue(Arrays.copyOf(timestamp.getValues(), FurnacesStats.TEMPERATURE_SENSOR_COUNT));
+        int maxValue = calculateMaxOverviewValue(Arrays.copyOf(timestamp.getValues(), actualSensorCount));
 
         float scaleRatio = drawHeight / (maxValue - minValue);
-        float valueHorizontalOffset = drawWidth / (FurnacesStats.TEMPERATURE_SENSOR_COUNT + 1);
+        float valueHorizontalOffset = drawWidth / (actualSensorCount + 1);
         float offsetX = valueHorizontalOffset;
 
-        for (int i = 0; i < FurnacesStats.TEMPERATURE_SENSOR_COUNT; i++, offsetX += valueHorizontalOffset) {
+        for (int i = 0; i < actualSensorCount; i++, offsetX += valueHorizontalOffset) {
             float valueY = timestamp.getValue(i) * scaleRatio;
             drawLine(offsetX, minValue, offsetX, valueY, columnWidth);
             drawText(offsetX - (textPaint.measureText(String.valueOf(i + 1)) / 2),

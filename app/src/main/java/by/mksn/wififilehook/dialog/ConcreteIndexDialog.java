@@ -31,7 +31,7 @@ public class ConcreteIndexDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View rootView = inflater.inflate(R.layout.dialog_concrete_index, null);
         final HorizontalPicker indexPicker = (HorizontalPicker) rootView.findViewById(R.id.dialog_concrete_index_index);
-        String[] values = new String[FurnacesStats.TEMPERATURE_SENSOR_COUNT];
+        String[] values = new String[FurnacesStats.getTemperatureSensorCount()];
         for (int i = 0; i < values.length; i++) {
             values[i] = String.valueOf(i + 1);
         }

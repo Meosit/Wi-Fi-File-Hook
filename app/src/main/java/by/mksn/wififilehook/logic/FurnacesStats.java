@@ -2,14 +2,13 @@ package by.mksn.wififilehook.logic;
 
 import android.support.annotation.NonNull;
 
-import java.util.Arrays;
-
 import by.mksn.wififilehook.logic.exception.CsvParseException;
 import by.mksn.wififilehook.logic.exception.IllegalValueIndexException;
 
 public final class FurnacesStats {
 
-    public static final int TEMPERATURE_SENSOR_COUNT = 31;
+    public static final int GRAPH_BREAK_SECOND_RANGE = 120;
+    private static int temperatureSensorCount = 31;
     private final ValuesTimestamp[] timestamps;
     private final int maxValue;
     private final int minValue;
@@ -38,13 +37,13 @@ public final class FurnacesStats {
                 }
                 timestamps[i] = new ValuesTimestamp(values, time);
             }
-            Arrays.sort(timestamps);
             this.maxValue = maxValue;
             this.minValue = minValue;
         } catch (Exception e) {
             e.printStackTrace();
             throw new CsvParseException("Parse file failed: " + e.getMessage());
         }
+
         if (timestamps.length == 0) {
             throw new CsvParseException("Parsing file failed: empty csv file");
         }
@@ -56,7 +55,21 @@ public final class FurnacesStats {
             if (timestamp.getValueCount() != constValueCount) {
                 throw new CsvParseException("Parse file failed: not all timestamps have equal value count");
             }
+            if (timestamp.getValueCount() < temperatureSensorCount) {
+                throw new CsvParseException("Parse file failed: not enough sensor count");
+            }
         }
+    }
+
+    public static int getTemperatureSensorCount() {
+        return temperatureSensorCount;
+    }
+
+    public static void setTemperatureSensorCount(int temperatureSensorCount) {
+        if (temperatureSensorCount <= 0) {
+            throw new IllegalArgumentException();
+        }
+        FurnacesStats.temperatureSensorCount = temperatureSensorCount;
     }
 
     public static int timeToSeconds(String time) {
