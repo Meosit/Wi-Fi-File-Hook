@@ -104,6 +104,7 @@
         rsb:barHeight="2dp"
         rsb:internalPadding="1dp"
         rsb:showLabels="false"
+        rsb:singleThumb="true"
         rsb:textAboveThumbsColor="@color/colorAccent" />
 
 </RelativeLayout>

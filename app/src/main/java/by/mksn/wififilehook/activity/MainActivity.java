@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -36,7 +38,9 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 @SuppressWarnings("unchecked")
 public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.ConcreteIndexDialogCallback {
 
-    private static final String PREF_FILE_PATH = "file_path";
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+
+    private static final String PREF_BASE_PATH = "base_path";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
     private static final String PREF_SENSOR_COUNT = "sensor_count";
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private UpdateGraphTask updateGraphTask;
     private FurnacesStats furnacesStats;
-    private String filePath;
+    private String basePath;
     private boolean isAsyncTaskRunning;
     private NtlmPasswordAuthentication auth;
     private int concreteFurnaceIndex;
@@ -74,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         statusText = (TextView) findViewById(R.id.activity_main_value_status);
         progressBar = (ProgressBar) findViewById(R.id.activity_main_progress);
@@ -89,22 +96,51 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             @Override
             public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
                 if (!minValue.equals(maxValue)) {
-                    drawGraphConcrete(concreteFurnaceIndex, ((Integer) minValue), ((Integer) maxValue));
+                    drawGraphConcrete(concreteFurnaceIndex, ((Integer) minValue), ((Integer) minValue) + 1);
                 } else {
                     Toast.makeText(MainActivity.this, R.string.activity_main_message_warning_range, Toast.LENGTH_SHORT).show();
                 }
             }
         });
         loadSettings();
-        updateFile();
+        updateFile(getCurrentDate());
     }
 
-    private String getSyncTime() {
+    private String defineResourcePath(String date) {
+        String result = basePath + ((basePath.charAt(basePath.length() - 1) == '/') ? "" : "/");
+        String args[] = date.split(".");
+        if (args.length != 3) {
+            return result + "1970/01/01.csv";
+        }
+        return result + args[2] + "/" + args[1] + "/" + args[0] + ".csv";
+    }
+
+    private String getCurrentTime() {
         Calendar c = Calendar.getInstance();
         return String.format(Locale.ROOT, "%02d:%02d:%02d",
                 c.get(Calendar.HOUR_OF_DAY),
                 c.get(Calendar.MINUTE),
                 c.get(Calendar.SECOND));
+    }
+
+    private String getCurrentDate() {
+        Calendar c = Calendar.getInstance();
+        return String.format(Locale.ROOT, "%02d.%02d.%04d",
+                c.get(Calendar.DAY_OF_MONTH),
+                c.get(Calendar.MONTH) + 1,
+                c.get(Calendar.YEAR));
+    }
+
+    private String getNextDayDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(DATE_FORMAT.parse(date));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            return DATE_FORMAT.format(calendar.getTime());
+        } catch (ParseException e) {
+            statusText.setText("Date error: " + e.getMessage());
+        }
+        return getCurrentDate();
     }
 
     private void loadSettings() {
@@ -119,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         Graph.setDefaultDotRadius(sharedPreferences.getInt(PREF_CONCRETE_DOT_RADIUS, 8));
         Graph.setDefaultLineWidth(sharedPreferences.getInt(PREF_CONCRETE_LINE_WIDTH, 4));
         Graph.setDefaultColumnWidth(sharedPreferences.getInt(PREF_OVERVIEW_COLUMN_WIDTH, 10));
-        filePath = sharedPreferences.getString(PREF_FILE_PATH, "");
+        basePath = sharedPreferences.getString(PREF_BASE_PATH, "");
         String username = sharedPreferences.getString(PREF_USERNAME, "");
         String password = sharedPreferences.getString(PREF_PASSWORD, "");
         if (username.isEmpty() || password.isEmpty()) {
@@ -145,18 +181,18 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 showFurnaceMenuItem.setIcon(R.drawable.ic_concrete);
                 graphConcreteImage.setVisibility(View.INVISIBLE);
                 graphOverviewImage.setVisibility(View.VISIBLE);
-                timeRangeBar.setVisibility(View.INVISIBLE);
+                //timeRangeBar.setVisibility(View.INVISIBLE);
             }
         }
     }
 
-    private void updateFile() {
-        if (filePath.isEmpty()) {
+    private void updateFile(String date) {
+        if (basePath.isEmpty()) {
             statusText.setText(R.string.activity_main_message_error_empty_path);
             return;
         }
         updateGraphTask = new UpdateGraphTask(this, getApplicationContext(), auth);
-        updateGraphTask.execute(filePath);
+        updateGraphTask.execute(defineResourcePath(date), defineResourcePath(getNextDayDate(date)), date);
     }
 
     private void drawGraphOverview() {
@@ -177,18 +213,23 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         if (isAsyncTaskRunning) {
             updateGraphTask.cancel(true);
         } else {
-            statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
+            statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime()));
         }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        invalidateOptionsMenu();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            getMenuInflater().inflate(R.menu.menu_main_portrait, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_main_landscape, menu);
+        }
         this.menu = menu;
         return true;
     }
@@ -217,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 stopUpdating();
                 return true;
             case R.id.action_refresh:
-                updateFile();
+                updateFile(getCurrentDate());
                 return true;
         }
 
@@ -231,8 +272,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     @Override
     public void onAsyncTaskPreExecute() {
-        isConcreteGraphVisible = false;
-        switchToLayout(false);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
         isAsyncTaskRunning = true;
@@ -246,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     @Override
     public void onAsyncTaskCancelled(FurnacesStats result) {
-        statusText.setText(getString(R.string.asynctask_message_cancelled, getSyncTime()));
+        statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime()));
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
         isAsyncTaskRunning = false;
@@ -255,9 +294,14 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     public void onAsyncTaskPostExecute(FurnacesStats result) {
         if (result != null) {
-            statusText.setText(getString(R.string.asynctask_message_sync_time, getSyncTime()));
+            statusText.setText(getString(R.string.asynctask_message_sync_time, getCurrentTime()));
             furnacesStats = result;
-            drawGraphOverview();
+            if (isConcreteGraphVisible) {
+                drawGraphConcrete(concreteFurnaceIndex, 0, 1);
+            } else {
+                drawGraphOverview();
+            }
+
         }
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);

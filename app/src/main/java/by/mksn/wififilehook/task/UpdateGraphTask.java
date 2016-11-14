@@ -39,21 +39,24 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
 
     @Override
     protected FurnacesStats doInBackground(String... strings) {
-        SmbFile smbFile;
+        SmbFile smbFileOne;
+        SmbFile smbFileTwo;
         try {
             if (auth == null) {
-                smbFile = new SmbFile("smb://" + strings[0]);
+                smbFileOne = new SmbFile("smb://" + strings[0]);
+                smbFileTwo = new SmbFile("smb://" + strings[1]);
             } else {
-                smbFile = new SmbFile("smb://" + strings[0], auth);
+                smbFileOne = new SmbFile("smb://" + strings[0], auth);
+                smbFileTwo = new SmbFile("smb://" + strings[1], auth);
             }
             publishProgress(new ProgressResult(1,
                     context.getString(R.string.asynctask_message_file_opening)));
-            String[] readFile = readFileContent(smbFile);
+            String[] readFile = readFileContent(smbFileOne, smbFileTwo);
             if (isCancelled()) {
                 return null;
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
-            return new FurnacesStats(readFile);
+            return new FurnacesStats(readFile, strings[3]);
         } catch (SmbException | MalformedURLException | CsvParseException e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.asynctask_message_error, e.getMessage())));
@@ -65,20 +68,22 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         }
     }
 
-    private String[] readFileContent(SmbFile sFile) throws IOException {
-        InputStream stream = sFile.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+    private String[] readFileContent(SmbFile... sFiles) throws IOException {
         ArrayList<String> result = new ArrayList<>();
-        String readLine;
-        try {
-            while ((readLine = reader.readLine()) != null) {
-                result.add(readLine);
-                if (isCancelled()) {
-                    return null;
+        for (SmbFile file : sFiles) {
+            InputStream stream = file.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String readLine;
+            try {
+                while ((readLine = reader.readLine()) != null) {
+                    result.add(readLine);
+                    if (isCancelled()) {
+                        return null;
+                    }
                 }
+            } finally {
+                reader.close();
             }
-        } finally {
-            reader.close();
         }
         return result.toArray(new String[result.size()]);
     }

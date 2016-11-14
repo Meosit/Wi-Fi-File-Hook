@@ -4,7 +4,7 @@
     <PreferenceCategory android:title="@string/settings.general.title">
         <EditTextPreference
             android:hint="@string/settings.file_path.hint"
-            android:key="file_path"
+            android:key="base_path"
             android:summary="@string/settings.file_path.summary"
             android:title="@string/settings.file_path.title" />
         <EditTextPreference

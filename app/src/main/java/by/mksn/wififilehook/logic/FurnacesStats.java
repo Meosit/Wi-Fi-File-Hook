@@ -9,14 +9,13 @@ public final class FurnacesStats {
 
     public static final int GRAPH_BREAK_SECOND_RANGE = 120;
     private static int temperatureSensorCount = 31;
+    public final String startDate;
     private final ValuesTimestamp[] timestamps;
-    private final int maxValue;
-    private final int minValue;
 
-    public FurnacesStats(String[] readFile) throws CsvParseException {
-        int maxValue = Integer.MIN_VALUE;
-        int minValue = Integer.MAX_VALUE;
+    public FurnacesStats(String[] readFile, String date) throws CsvParseException {
         try {
+            startDate = date;
+            String prevTime = "00:00:00";
             timestamps = new ValuesTimestamp[readFile.length];
             for (int i = 0; i < readFile.length; i++) {
                 String[] strings = readFile[i].split(";");
@@ -24,21 +23,17 @@ public final class FurnacesStats {
                 if (time.length() == 7) {
                     time = "0".concat(time);
                 }
+                if (prevTime.compareTo(time) > 0) {
+                    time = (Integer.parseInt(time.substring(0, 2)) + 24) + time.substring(2, 8);
+                }
+                prevTime = time;
                 int[] values = new int[strings.length - 1];
                 for (int j = 0; j < values.length; j++) {
                     int value = Integer.parseInt(strings[j + 1]);
-                    if (value <= minValue) {
-                        minValue = value;
-                    }
-                    if (value >= maxValue) {
-                        maxValue = value;
-                    }
                     values[j] = value;
                 }
                 timestamps[i] = new ValuesTimestamp(values, time);
             }
-            this.maxValue = maxValue;
-            this.minValue = minValue;
         } catch (Exception e) {
             e.printStackTrace();
             throw new CsvParseException("Parse file failed: " + e.getMessage());
@@ -80,14 +75,6 @@ public final class FurnacesStats {
         return Integer.parseInt(args[0]) * 3600 + Integer.parseInt(args[1]) * 60 + Integer.parseInt(args[2]);
     }
 
-    public int getMaxValue() {
-        return maxValue;
-    }
-
-    public int getMinValue() {
-        return minValue;
-    }
-
     public int getTimestampCount() {
         return timestamps.length;
     }
@@ -121,7 +108,7 @@ public final class FurnacesStats {
         }
 
         @Override
-        public int compareTo(TimeValue timeValue) {
+        public int compareTo(@NonNull TimeValue timeValue) {
             return time.compareTo(timeValue.time);
         }
     }
@@ -156,6 +143,5 @@ public final class FurnacesStats {
             return values.clone();
         }
     }
-
 
 }
