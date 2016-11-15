@@ -19,12 +19,45 @@
             android:key="password"
             android:summary="@string/settings.password.summary"
             android:title="@string/settings.password.title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings.graph_constraints.title">
         <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
             android:defaultValue="31"
             android:key="sensor_count"
             android:summary="@string/settings.sensor_count.summary"
             android:title="@string/settings.sensor_count.title"
             app:vnt_minValue="1"
+            app:vnt_setWrapSelectorWheel="true" />
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="10"
+            android:key="graph_time_range"
+            android:summary="@string/settings.graph_time_range.summary"
+            android:title="@string/settings.graph_time_range.title"
+            app:vnt_maxValue="24"
+            app:vnt_minValue="2"
+            app:vnt_setWrapSelectorWheel="true" />
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="8"
+            android:key="graph_big_step"
+            android:summary="@string/settings.graph_big_step.summary"
+            android:title="@string/settings.graph_big_step.title"
+            app:vnt_maxValue="24"
+            app:vnt_minValue="1"
+            app:vnt_setWrapSelectorWheel="true" />
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="1"
+            android:key="graph_little_step"
+            android:summary="@string/settings.graph_little_step.summary"
+            android:title="@string/settings.graph_little_step.title"
+            app:vnt_maxValue="24"
+            app:vnt_minValue="1"
+            app:vnt_setWrapSelectorWheel="true" />
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="120"
+            android:key="graph_line_break"
+            android:summary="@string/settings.graph_line_break.summary"
+            android:title="@string/settings.graph_line_break.title"
+            app:vnt_minValue="0"
             app:vnt_setWrapSelectorWheel="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings.graph_customization.title">

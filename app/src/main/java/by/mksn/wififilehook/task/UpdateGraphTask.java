@@ -44,26 +44,37 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         try {
             if (auth == null) {
                 smbFileOne = new SmbFile("smb://" + strings[0]);
-                smbFileTwo = new SmbFile("smb://" + strings[1]);
             } else {
                 smbFileOne = new SmbFile("smb://" + strings[0], auth);
-                smbFileTwo = new SmbFile("smb://" + strings[1], auth);
             }
+
             publishProgress(new ProgressResult(1,
                     context.getString(R.string.asynctask_message_file_opening)));
-            String[] readFile = readFileContent(smbFileOne, smbFileTwo);
+
+            String[] readFile;
+            try {
+                if (auth == null) {
+                    smbFileTwo = new SmbFile("smb://" + strings[1]);
+                } else {
+                    smbFileTwo = new SmbFile("smb://" + strings[1], auth);
+                }
+                readFile = readFileContent(smbFileOne, smbFileTwo);
+            } catch (SmbException | MalformedURLException e) {
+                readFile = readFileContent(smbFileOne);
+            }
+
             if (isCancelled()) {
                 return null;
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
-            return new FurnacesStats(readFile, strings[3]);
+            return new FurnacesStats(readFile);
         } catch (SmbException | MalformedURLException | CsvParseException e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.asynctask_message_error, e.getMessage())));
             return null;
         } catch (Exception e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
-                    context.getString(R.string.asynctask_message_error, "File reading error" + e.getMessage())));
+                    context.getString(R.string.asynctask_message_error, "File reading error: " + e.getMessage())));
             return null;
         }
     }

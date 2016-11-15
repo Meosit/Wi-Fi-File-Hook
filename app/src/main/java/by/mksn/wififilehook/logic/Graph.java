@@ -228,7 +228,7 @@ public final class Graph {
             int timeInSeconds = FurnacesStats.timeToSeconds(times[i]) - minTimeInSeconds;
             float valueY = (values[i] - minValue) * scaleRatio;
             float valueX = timeInSeconds * secondInPixels;
-            if (((valueX - oldValueX) / secondInPixels) <= FurnacesStats.GRAPH_BREAK_SECOND_RANGE) {
+            if (((valueX - oldValueX) / secondInPixels) <= FurnacesStats.getGraphBreakSecondRange()) {
                 drawLine(oldValueX, oldValueY, valueX, valueY, lineWidth);
             }
             drawCircle(valueX, valueY, dotRadius);
@@ -251,7 +251,7 @@ public final class Graph {
 
         for (int i = minHour; i <= maxHour; i++) {
             float offsetX = ((i - minHour) * 3600) * secondInPixels;
-            drawText(offsetX, 0 - (concreteTextSizeDefault) - textMargin, String.valueOf(i).concat(":00"));
+            drawText(offsetX, 0 - (concreteTextSizeDefault) - textMargin, String.valueOf(i % 24).concat(":00"));
         }
     }
 
@@ -283,8 +283,6 @@ public final class Graph {
             drawText(-textMargin, yBorderMarking - (overviewTextSizeDefault / 2),
                     String.format(Locale.getDefault(), "%.0f", yBorderMarking / scaleRatio));
         }
-        textPaint.setTextAlign(Paint.Align.LEFT);
-        drawText(textMargin, drawHeight - overviewTextSizeDefault, context.getString(R.string.graph_overview_label_time, timestamp.time));
     }
 
     public Bitmap getResultBitmap() {

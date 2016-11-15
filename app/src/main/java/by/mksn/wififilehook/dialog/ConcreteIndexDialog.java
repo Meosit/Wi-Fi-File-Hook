@@ -16,9 +16,9 @@ import by.mksn.wififilehook.logic.FurnacesStats;
 
 public class ConcreteIndexDialog extends DialogFragment {
 
-    private ConcreteIndexDialogCallback callback;
+    private DialogCallback callback;
 
-    public static ConcreteIndexDialog newInstance(ConcreteIndexDialogCallback callback) {
+    public static ConcreteIndexDialog newInstance(DialogCallback callback) {
         ConcreteIndexDialog dialog = new ConcreteIndexDialog();
         dialog.callback = callback;
         return dialog;
@@ -40,21 +40,21 @@ public class ConcreteIndexDialog extends DialogFragment {
                 .setPositiveButton(R.string.dialog_concrete_index_positive, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        callback.onPositiveClick(indexPicker.getSelectedItem());
+                        callback.onConcreteIndexDialogPositiveClick(indexPicker.getSelectedItem());
                     }
                 })
-                .setNegativeButton(R.string.dialog_concrete_index_negative, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_negative, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        callback.onNegativeClick();
+                        callback.onConcreteIndexDialogNegativeClick();
                     }
                 })
                 .create();
     }
 
-    public interface ConcreteIndexDialogCallback {
-        void onPositiveClick(int index);
+    public interface DialogCallback {
+        void onConcreteIndexDialogPositiveClick(int index);
 
-        void onNegativeClick();
+        void onConcreteIndexDialogNegativeClick();
     }
 }

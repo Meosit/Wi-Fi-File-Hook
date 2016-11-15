@@ -7,14 +7,15 @@ import by.mksn.wififilehook.logic.exception.IllegalValueIndexException;
 
 public final class FurnacesStats {
 
-    public static final int GRAPH_BREAK_SECOND_RANGE = 120;
+    private static int graphHourTimeRange = 10;
+    private static int graphHourTimeBigStep = 8;
+    private static int graphHourTimeLittleStep = 1;
+    private static int graphBreakSecondRange = 120;
     private static int temperatureSensorCount = 31;
-    public final String startDate;
     private final ValuesTimestamp[] timestamps;
 
-    public FurnacesStats(String[] readFile, String date) throws CsvParseException {
+    public FurnacesStats(String[] readFile) throws CsvParseException {
         try {
-            startDate = date;
             String prevTime = "00:00:00";
             timestamps = new ValuesTimestamp[readFile.length];
             for (int i = 0; i < readFile.length; i++) {
@@ -56,6 +57,17 @@ public final class FurnacesStats {
         }
     }
 
+    public static int getGraphBreakSecondRange() {
+        return graphBreakSecondRange;
+    }
+
+    public static void setGraphBreakSecondRange(int graphBreakSecondRange) {
+        if (graphBreakSecondRange < 0) {
+            throw new IllegalArgumentException();
+        }
+        FurnacesStats.graphBreakSecondRange = graphBreakSecondRange;
+    }
+
     public static int getTemperatureSensorCount() {
         return temperatureSensorCount;
     }
@@ -67,12 +79,58 @@ public final class FurnacesStats {
         FurnacesStats.temperatureSensorCount = temperatureSensorCount;
     }
 
+    public static int getGraphHourTimeRange() {
+        return graphHourTimeRange;
+    }
+
+    public static void setGraphHourTimeRange(int range) {
+        if (range < 2 || range > 48) {
+            throw new IllegalArgumentException();
+        }
+        FurnacesStats.graphHourTimeRange = range;
+    }
+
+    public static int getGraphHourTimeBigStep() {
+        return graphHourTimeBigStep;
+    }
+
+    public static void setGraphHourTimeBigStep(int step) {
+        if (step < 1 || step > 24) {
+            throw new IllegalArgumentException();
+        }
+        FurnacesStats.graphHourTimeBigStep = step;
+    }
+
+    public static int getGraphHourTimeLittleStep() {
+        return graphHourTimeLittleStep;
+    }
+
+    public static void setGraphHourTimeLittleStep(int step) {
+        if (step < 1 || step > 24) {
+            throw new IllegalArgumentException();
+        }
+        FurnacesStats.graphHourTimeLittleStep = step;
+    }
+
     public static int timeToSeconds(String time) {
         String[] args = time.split(":");
         if (args.length != 3) {
             throw new IllegalArgumentException("Not time string passed");
         }
         return Integer.parseInt(args[0]) * 3600 + Integer.parseInt(args[1]) * 60 + Integer.parseInt(args[2]);
+    }
+
+    public int getTimestampIndexByTime(String time) {
+
+        int index = Integer.MIN_VALUE;
+        for (int i = 1; i < timestamps.length; i++) {
+            if ((timestamps[i].time.compareTo(time) >= 0)
+                    && (timestamps[i - 1].time.compareTo(time) <= 0)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     public int getTimestampCount() {
@@ -84,6 +142,15 @@ public final class FurnacesStats {
             throw new IllegalValueIndexException();
         }
         return timestamps[index];
+    }
+
+    public ValuesTimestamp getNearestTimeMaxTimestamp(String time) {
+        for (int i = timestamps.length - 1; i >= 0; i--) {
+            if (timestamps[i].time.compareTo(time) <= 0) {
+                return timestamps[i];
+            }
+        }
+        return timestamps[0];
     }
 
     public TimeValue[] getConcreteIndexAllTimeValues(int index) {

@@ -36,27 +36,27 @@
         </menu>
     </item>
     <item
-        android:id="@+id/action_next_day"
+        android:id="@+id/action_next_big_step"
         android:icon="@drawable/ic_double_right_arr"
         android:orderInCategory="700"
-        android:title="@string/menu.main.rewind.next_day"
+        android:title="@string/menu.main.rewind.next_big_step"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_next_hour"
+        android:id="@+id/action_next_little_step"
         android:icon="@drawable/ic_right_arr"
         android:orderInCategory="600"
-        android:title="@string/menu.main.rewind.next_hour"
+        android:title="@string/menu.main.rewind.next_little_step"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_prev_hour"
+        android:id="@+id/action_prev_little_step"
         android:icon="@drawable/ic_left_arr"
         android:orderInCategory="500"
-        android:title="@string/menu.main.rewind.prev_hour"
+        android:title="@string/menu.main.rewind.prev_little_step"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_prev_day"
+        android:id="@+id/action_prev_big_step"
         android:icon="@drawable/ic_double_left_arr"
         android:orderInCategory="400"
-        android:title="@string/menu.main.rewind.prev_day"
+        android:title="@string/menu.main.rewind.prev_big_step"
         app:showAsAction="always" />
 </menu>

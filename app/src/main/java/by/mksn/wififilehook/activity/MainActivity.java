@@ -16,8 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.florescu.android.rangeseekbar.RangeSeekBar;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,6 +23,7 @@ import java.util.Locale;
 
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.dialog.ConcreteIndexDialog;
+import by.mksn.wififilehook.dialog.SelectDateDialog;
 import by.mksn.wififilehook.logic.FurnacesStats;
 import by.mksn.wififilehook.logic.Graph;
 import by.mksn.wififilehook.logic.ProgressResult;
@@ -36,7 +35,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 @SuppressWarnings("unchecked")
-public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.ConcreteIndexDialogCallback {
+public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.DialogCallback, SelectDateDialog.DialogCallback {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -44,6 +43,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
     private static final String PREF_SENSOR_COUNT = "sensor_count";
+    private static final String PREF_GRAPH_TIME_RANGE = "graph_time_range";
+    private static final String PREF_GRAPH_BIG_STEP = "graph_big_step";
+    private static final String PREF_GRAPH_LITTLE_STEP = "graph_little_step";
+    private static final String PREF_GRAPH_LINE_BREAK = "graph_line_break";
     private static final String PREF_OVERVIEW_TEXT_COLOR = "overview_text_color";
     private static final String PREF_OVERVIEW_TEXT_SIZE = "overview_text_size";
     private static final String PREF_OVERVIEW_DRAW_COLOR = "overview_draw_color";
@@ -56,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private Menu menu;
     private boolean isConcreteGraphVisible = false;
+
+    private String graphMinDate;
+    private int graphMinHour;
 
     private UpdateGraphTask updateGraphTask;
     private FurnacesStats furnacesStats;
@@ -70,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private PhotoViewAttacher overviewZoomer;
     private ImageView graphConcreteImage;
     private PhotoViewAttacher concreteZoomer;
-    private RangeSeekBar<Integer> timeRangeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,36 +96,32 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         graphConcreteImage = (ImageView) findViewById(R.id.activity_main_graph_concrete);
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
-        timeRangeBar = (RangeSeekBar<Integer>) findViewById(R.id.activity_main_time_range);
-        timeRangeBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener() {
-            @Override
-            public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
-                if (!minValue.equals(maxValue)) {
-                    drawGraphConcrete(concreteFurnaceIndex, ((Integer) minValue), ((Integer) minValue) + 1);
-                } else {
-                    Toast.makeText(MainActivity.this, R.string.activity_main_message_warning_range, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         loadSettings();
-        updateFile(getCurrentDate());
+        graphMinDate = getCurrentDate();
+        graphMinHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2;
+        updateFiles();
     }
 
     private String defineResourcePath(String date) {
         String result = basePath + ((basePath.charAt(basePath.length() - 1) == '/') ? "" : "/");
-        String args[] = date.split(".");
+        String args[] = date.split("\\.");
         if (args.length != 3) {
             return result + "1970/01/01.csv";
         }
         return result + args[2] + "/" + args[1] + "/" + args[0] + ".csv";
     }
 
-    private String getCurrentTime() {
+    private String getCurrentTime(boolean isHoursOnly) {
         Calendar c = Calendar.getInstance();
-        return String.format(Locale.ROOT, "%02d:%02d:%02d",
-                c.get(Calendar.HOUR_OF_DAY),
-                c.get(Calendar.MINUTE),
-                c.get(Calendar.SECOND));
+        if (isHoursOnly) {
+            return String.format(Locale.ROOT, "%02d:00:00",
+                    c.get(Calendar.HOUR_OF_DAY));
+        } else {
+            return String.format(Locale.ROOT, "%02d:%02d:%02d",
+                    c.get(Calendar.HOUR_OF_DAY),
+                    c.get(Calendar.MINUTE),
+                    c.get(Calendar.SECOND));
+        }
     }
 
     private String getCurrentDate() {
@@ -131,11 +132,11 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 c.get(Calendar.YEAR));
     }
 
-    private String getNextDayDate(String date) {
+    private String addDaysToDate(String date, int value) {
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(DATE_FORMAT.parse(date));
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.DAY_OF_MONTH, value);
             return DATE_FORMAT.format(calendar.getTime());
         } catch (ParseException e) {
             statusText.setText("Date error: " + e.getMessage());
@@ -145,7 +146,15 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
+
+        //Constraints
         FurnacesStats.setTemperatureSensorCount(sharedPreferences.getInt(PREF_SENSOR_COUNT, 31));
+        FurnacesStats.setGraphBreakSecondRange(sharedPreferences.getInt(PREF_GRAPH_LINE_BREAK, 120));
+        FurnacesStats.setGraphHourTimeRange(sharedPreferences.getInt(PREF_GRAPH_TIME_RANGE, 10));
+        FurnacesStats.setGraphHourTimeBigStep(sharedPreferences.getInt(PREF_GRAPH_BIG_STEP, 8));
+        FurnacesStats.setGraphHourTimeLittleStep(sharedPreferences.getInt(PREF_GRAPH_LITTLE_STEP, 1));
+
+        //Visualisation
         Graph.setOverviewDrawDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_DRAW_COLOR, Color.WHITE));
         Graph.setOverviewTextDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_COLOR, Color.YELLOW));
         Graph.setOverviewTextSizeDefault(sharedPreferences.getInt(PREF_OVERVIEW_TEXT_SIZE, 30));
@@ -155,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         Graph.setDefaultDotRadius(sharedPreferences.getInt(PREF_CONCRETE_DOT_RADIUS, 8));
         Graph.setDefaultLineWidth(sharedPreferences.getInt(PREF_CONCRETE_LINE_WIDTH, 4));
         Graph.setDefaultColumnWidth(sharedPreferences.getInt(PREF_OVERVIEW_COLUMN_WIDTH, 10));
+
+        //Access
         basePath = sharedPreferences.getString(PREF_BASE_PATH, "");
         String username = sharedPreferences.getString(PREF_USERNAME, "");
         String password = sharedPreferences.getString(PREF_PASSWORD, "");
@@ -165,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         }
     }
 
-    private void switchToLayout(boolean isConcrete) {
+    private void switchLayout(boolean isConcrete) {
         if (menu != null) {
             MenuItem showFurnaceMenuItem = menu.findItem(R.id.action_show_concrete);
             if (isConcrete) {
@@ -173,47 +184,87 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 showFurnaceMenuItem.setIcon(R.drawable.ic_overview);
                 graphConcreteImage.setVisibility(View.VISIBLE);
                 graphOverviewImage.setVisibility(View.INVISIBLE);
-                timeRangeBar.setVisibility(View.VISIBLE);
-                timeRangeBar.setSelectedMinValue(0);
-                timeRangeBar.setSelectedMaxValue(24);
             } else {
                 showFurnaceMenuItem.setTitle(R.string.menu_main_concrete_furnace_invisible);
                 showFurnaceMenuItem.setIcon(R.drawable.ic_concrete);
                 graphConcreteImage.setVisibility(View.INVISIBLE);
                 graphOverviewImage.setVisibility(View.VISIBLE);
-                //timeRangeBar.setVisibility(View.INVISIBLE);
             }
         }
     }
 
-    private void updateFile(String date) {
+    private void updateFiles() {
         if (basePath.isEmpty()) {
             statusText.setText(R.string.activity_main_message_error_empty_path);
             return;
         }
         updateGraphTask = new UpdateGraphTask(this, getApplicationContext(), auth);
-        updateGraphTask.execute(defineResourcePath(date), defineResourcePath(getNextDayDate(date)), date);
+        updateGraphTask.execute(defineResourcePath(graphMinDate), defineResourcePath(addDaysToDate(graphMinDate, 1)));
     }
 
-    private void drawGraphOverview() {
+    private void redrawGraph() {
+        if (furnacesStats != null) {
+            if (isConcreteGraphVisible) {
+                drawGraphConcrete(concreteFurnaceIndex);
+                statusText.setText(getString(R.string.asynctask_message_graph_for_concrete, concreteFurnaceIndex + 1,
+                        (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
+                        graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+            } else {
+                FurnacesStats.ValuesTimestamp timestamp = furnacesStats.getNearestTimeMaxTimestamp(
+                        String.format(Locale.ROOT, "%02d:00:00", graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1));
+                drawGraphOverview(timestamp);
+                if (timestamp.time.compareTo("24:00:00") < 0) {
+                    statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
+                            graphMinDate,
+                            timestamp.time));
+                } else {
+                    statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
+                            addDaysToDate(graphMinDate, 1),
+                            (Integer.parseInt(timestamp.time.substring(0, 2)) % 24) + timestamp.time.substring(2, 8)));
+                }
+            }
+        } else {
+            statusText.setText(getString(R.string.asynctask_message_graph_for_no_data,
+                    (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
+                    graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+            graphConcreteImage.setImageResource(R.drawable.no_data);
+            graphOverviewImage.setImageResource(R.drawable.no_data);
+        }
+    }
+
+    private void drawGraphOverview(FurnacesStats.ValuesTimestamp timestamp) {
         Graph graph = new Graph(this, R.drawable.overview);
-        graph.drawOverviewGraph(furnacesStats.getTimestamp(furnacesStats.getTimestampCount() - 1));
+        graph.drawOverviewGraph(timestamp);
         graphOverviewImage.setImageDrawable(graph.getResultBitmapDrawable());
         overviewZoomer.update();
     }
 
-    private void drawGraphConcrete(int furnaceIndex, int minHour, int maxHour) {
+    private void drawGraphConcrete(int furnaceIndex) {
         Graph graph = new Graph(this, R.drawable.concrete);
-        graph.drawConcreteGraph(furnacesStats.getConcreteIndexAllTimeValues(furnaceIndex), minHour, maxHour);
+        graph.drawConcreteGraph(furnacesStats.getConcreteIndexAllTimeValues(furnaceIndex),
+                graphMinHour, graphMinHour + FurnacesStats.getGraphHourTimeRange());
         graphConcreteImage.setImageDrawable(graph.getResultBitmapDrawable());
         concreteZoomer.update();
+    }
+
+    private void moveGraphConstraints(int step) {
+        graphMinHour += step;
+        if (graphMinHour < 0) {
+            graphMinDate = addDaysToDate(graphMinDate, -1);
+            graphMinHour = 24 + graphMinHour;
+            updateFiles();
+        } else if (graphMinHour > 48 - FurnacesStats.getGraphHourTimeRange()) {
+            graphMinDate = addDaysToDate(graphMinDate, 1);
+            graphMinHour -= 24;
+            updateFiles();
+        }
     }
 
     private void stopUpdating() {
         if (isAsyncTaskRunning) {
             updateGraphTask.cancel(true);
         } else {
-            statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime()));
+            statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime(false)));
         }
     }
 
@@ -245,8 +296,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             case R.id.action_show_concrete:
                 if (furnacesStats != null) {
                     if (isConcreteGraphVisible) {
-                        switchToLayout(false);
+                        switchLayout(false);
                         isConcreteGraphVisible = false;
+                        redrawGraph();
                     } else {
                         ConcreteIndexDialog.newInstance(this).show(getSupportFragmentManager(), "IndexPicker");
                     }
@@ -257,8 +309,24 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             case R.id.action_stop:
                 stopUpdating();
                 return true;
+            case R.id.action_next_big_step:
+                moveGraphConstraints(FurnacesStats.getGraphHourTimeBigStep());
+                redrawGraph();
+                return true;
+            case R.id.action_next_little_step:
+                moveGraphConstraints(FurnacesStats.getGraphHourTimeLittleStep());
+                redrawGraph();
+                return true;
+            case R.id.action_prev_big_step:
+                moveGraphConstraints(-FurnacesStats.getGraphHourTimeBigStep());
+                redrawGraph();
+                return true;
+            case R.id.action_prev_little_step:
+                moveGraphConstraints(-FurnacesStats.getGraphHourTimeLittleStep());
+                redrawGraph();
+                return true;
             case R.id.action_refresh:
-                updateFile(getCurrentDate());
+                SelectDateDialog.newInstance(this).show(getSupportFragmentManager(), "DatePicker");
                 return true;
         }
 
@@ -285,23 +353,22 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     @Override
     public void onAsyncTaskCancelled(FurnacesStats result) {
-        statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime()));
+        statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime(false)));
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
+        graphOverviewImage.setImageResource(R.drawable.dummy_overview);
+        graphConcreteImage.setImageResource(R.drawable.dummy_concrete);
         isAsyncTaskRunning = false;
     }
 
     @Override
     public void onAsyncTaskPostExecute(FurnacesStats result) {
         if (result != null) {
-            statusText.setText(getString(R.string.asynctask_message_sync_time, getCurrentTime()));
             furnacesStats = result;
-            if (isConcreteGraphVisible) {
-                drawGraphConcrete(concreteFurnaceIndex, 0, 1);
-            } else {
-                drawGraphOverview();
-            }
-
+            redrawGraph();
+        } else {
+            graphConcreteImage.setImageResource(R.drawable.no_data);
+            graphOverviewImage.setImageResource(R.drawable.no_data);
         }
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
@@ -309,16 +376,23 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onPositiveClick(int index) {
+    public void onConcreteIndexDialogPositiveClick(int index) {
         concreteFurnaceIndex = index;
-        switchToLayout(true);
+        switchLayout(true);
         isConcreteGraphVisible = true;
-        drawGraphConcrete(concreteFurnaceIndex, 0, 24);
+        redrawGraph();
     }
 
     @Override
-    public void onNegativeClick() {
-        switchToLayout(false);
+    public void onConcreteIndexDialogNegativeClick() {
+        switchLayout(false);
         isConcreteGraphVisible = false;
+    }
+
+    @Override
+    public void onSelectDateDialogDateSet(String chosenDate) {
+        graphMinDate = chosenDate;
+        graphMinHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2;
+        updateFiles();
     }
 }
