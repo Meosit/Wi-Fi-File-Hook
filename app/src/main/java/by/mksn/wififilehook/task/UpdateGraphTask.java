@@ -70,11 +70,11 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
             return new FurnacesStats(readFile);
         } catch (SmbException | MalformedURLException | CsvParseException e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
-                    context.getString(R.string.asynctask_message_error, e.getMessage())));
+                    context.getString(R.string.message_error, e.getMessage())));
             return null;
         } catch (Exception e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
-                    context.getString(R.string.asynctask_message_error, "File reading error: " + e.getMessage())));
+                    context.getString(R.string.message_error, "File reading error: " + e.getMessage())));
             return null;
         }
     }

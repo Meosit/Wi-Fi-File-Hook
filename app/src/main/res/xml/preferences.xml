@@ -2,6 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/settings.general.title">
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings.access.title">
         <EditTextPreference
             android:hint="@string/settings.file_path.hint"
             android:key="base_path"
@@ -20,7 +23,7 @@
             android:summary="@string/settings.password.summary"
             android:title="@string/settings.password.title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings.graph_constraints.title">
+    <PreferenceCategory android:title="@string/settings.constraints.title">
         <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
             android:defaultValue="31"
             android:key="sensor_count"
@@ -60,7 +63,7 @@
             app:vnt_minValue="0"
             app:vnt_setWrapSelectorWheel="true" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings.graph_customization.title">
+    <PreferenceCategory android:title="@string/settings.visualisation.title">
         <PreferenceScreen android:title="@string/settings.overview.title">
             <com.rarepebble.colorpicker.ColorPreference
                 android:defaultValue="#ffffff"

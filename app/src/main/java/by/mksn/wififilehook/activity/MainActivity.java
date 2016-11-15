@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             calendar.add(Calendar.DAY_OF_MONTH, value);
             return DATE_FORMAT.format(calendar.getTime());
         } catch (ParseException e) {
-            statusText.setText("Date error: " + e.getMessage());
+            statusText.setText(getString(R.string.message_error, "Date error: " + e.getMessage()));
         }
         return getCurrentDate();
     }

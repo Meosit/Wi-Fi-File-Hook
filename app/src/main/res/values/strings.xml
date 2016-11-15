@@ -1,31 +1,19 @@
 <resources>
-    <string name="app_name">Wi-Fi File Hook</string>
-    <string name="activity.main.label.resource_path">Base address of csv resources</string>
-    <string name="activity.main.input.resource_path.hint">192.168.0.0/Share/Base</string>
-    <string name="activity.main.label.status">Status:</string>
-    <string name="activity.main.input.sync_time.default">60</string>
-    <string name="activity.main.label.sync_time">Sync time</string>
-    <string name="activity.main.button.refresh">Apply &amp; Refresh</string>
-    <string name="activity.main.checkbox.connection_default">Default connection</string>
-    <string name="activity.main.button.show_file">Show file</string>
-    <string name="activity.main.checkbox.open_if_can">Open if can on start</string>
-    <string name="activity.main.input.sync_time.hint">60</string>
-    <string name="password.dialog.label.password">Type password:</string>
+    <string name="app_name" translatable="false">Wi-Fi File Hook</string>
     <string name="menu.main.settings">Settings</string>
     <string name="menu.main.stop">Stop updating</string>
     <string name="menu.main.refresh">Refresh</string>
     <string name="settings.file_path.summary">Provide base path of resource files in local network</string>
     <string name="settings.file_path.title">Base address</string>
-    <string name="settings.file_path.hint">192.168.1.1/Share/Base/</string>
+    <string name="settings.file_path.hint" translatable="false">192.168.1.1/Share/Base/</string>
     <string name="settings.title">Settings</string>
-    <string name="activity.main.message.info.settings_updated">Settings has been updated</string>
-    <string name="asynctask.message.error">"%1$s"</string>
+    <string name="message.error" translatable="false">"%1$s"</string>
     <string name="asynctask.message.file_opening">Opening files… </string>
     <string name="asynctask.message.file_reading">Reading files… %1$d%%</string>
     <string name="asynctask.message.cancelled">Updating cancelled. Time: %1$s</string>
-    <string name="asynctask.message.graph_for.concrete">"Sensor: %1$d. Time: %2$s %3$d:00-%4$d:00"</string>
-    <string name="asynctask.message.graph_for.overview">"Overview graph for: %1$s %2$s"</string>
-    <string name="asynctask.message.graph_for.no_data">"No data found for: %1$s %2$d:00-%3$d:00""</string>
+    <string name="asynctask.message.graph_for.concrete">Sensor: %1$d. Time: %2$s %3$d:00-%4$d:00</string>
+    <string name="asynctask.message.graph_for.overview">Overview graph for: %1$s %2$s</string>
+    <string name="asynctask.message.graph_for.no_data">No data found for: %1$s %2$d:00-%3$d:00</string>
     <string name="asynctask.message.parsing_file">Files are read. Start parsing files…</string>
     <string name="activity.main.message.error.empty_path">Error occurred: empty base path.</string>
     <string name="menu.main.concrete_furnace.invisible">Show concrete furnace graph</string>
@@ -34,9 +22,9 @@
     <string name="settings.text_color.title">Text color</string>
     <string name="settings.draw_color.summary">Color of lines on graph</string>
     <string name="settings.draw_color.title">Draw color</string>
-    <string name="settings.general.title">Access</string>
+    <string name="settings.access.title">Access</string>
     <string name="settings.overview.title">Overview graph</string>
-    <string name="settings.username.hint">User</string>
+    <string name="settings.username.hint" translatable="false">User</string>
     <string name="settings.username.summary">Might be empty if auth is not necessary</string>
     <string name="settings.username.title">Username</string>
     <string name="settings.password.summary">Might be empty if auth is not necessary</string>
@@ -45,7 +33,7 @@
     <string name="settings.text_size.summary">Size of text captions on graph</string>
     <string name="settings.concrete.title">Concrete graph</string>
     <string name="dialog.concrete_index.title">Concrete index</string>
-    <string name="dialog.concrete_index.message">Choose concrete index to show:</string>
+    <string name="dialog.concrete_index.message">Choose concrete sensor index to show:</string>
     <string name="dialog.concrete_index.positive">Show</string>
     <string name="dialog.negative">Cancel</string>
     <string name="dialog.datepicker.positive">Set</string>
@@ -56,20 +44,21 @@
     <string name="menu.main.rewind.prev_little_step">Prev Hour</string>
     <string name="menu.main.rewind.prev_big_step">Prev 8 Hours</string>
     <string name="settings.overview_column_width.title">Column width</string>
-    <string name="settings.overview_column_width.summary">Width of drawing color</string>
+    <string name="settings.overview_column_width.summary">Width of drawing columns</string>
     <string name="settings.concrete_line_width.title">Between dots line width</string>
     <string name="settings.concrete_dot_radius.title">Dot radius</string>
-    <string name="settings.graph_customization.title">Visualisation</string>
+    <string name="settings.visualisation.title">Visualisation</string>
     <string name="settings.sensor_count.title">Sensor count</string>
     <string name="settings.sensor_count.summary">Number of sensors to draw on overview graph</string>
     <string name="menu.main.option_menu">Option Menu</string>
     <string name="settings.graph_time_range.summary">Range of concrete graph draw field in hours</string>
     <string name="settings.graph_time_range.title">Draw window time range in hours</string>
-    <string name="settings.graph_constraints.title">Constraints</string>
+    <string name="settings.constraints.title">Constraints</string>
     <string name="settings.graph_big_step.summary"><![CDATA[Buttons << and >>]]></string>
     <string name="settings.graph_big_step.title">Graph move big step in hours</string>
     <string name="settings.graph_little_step.summary"><![CDATA[Buttons < and >]]></string>
     <string name="settings.graph_little_step.title">Graph window move little step in hours</string>
     <string name="settings.graph_line_break.summary">If between dots more than this amount of seconds then line will not drawn</string>
     <string name="settings.graph_line_break.title">Graph line break in seconds</string>
+    <string name="settings.general.title">General</string>
 </resources>

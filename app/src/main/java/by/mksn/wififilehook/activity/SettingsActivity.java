@@ -1,6 +1,5 @@
 package by.mksn.wififilehook.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import by.mksn.wififilehook.R;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -19,17 +16,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setResult(RESULT_CANCELED);
-
-        getDefaultSharedPreferences(getApplicationContext()).
-                registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    @Override
-                    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                        setResult(RESULT_OK);
-                    }
-                });
-
-
+        setResult(RESULT_OK);
         Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
