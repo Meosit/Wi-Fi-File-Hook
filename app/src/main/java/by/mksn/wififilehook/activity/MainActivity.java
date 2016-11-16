@@ -116,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         if (graphMinHour < 0) {
             graphMinDate = addDaysToDate(getCurrentDate(), -1);
             graphMinHour += 24;
+        } else {
+            graphMinDate = getCurrentDate();
         }
 
 
