@@ -1,13 +1,10 @@
 <resources>
-    <string name="app_name" translatable="false">Wi-Fi File Hook</string>
     <string name="menu.main.settings">Settings</string>
     <string name="menu.main.stop">Stop updating</string>
     <string name="menu.main.refresh">Refresh</string>
     <string name="settings.file_path.summary">Provide base path of resource files in local network</string>
     <string name="settings.file_path.title">Base address</string>
-    <string name="settings.file_path.hint" translatable="false">192.168.1.1/Share/Base/</string>
     <string name="settings.title">Settings</string>
-    <string name="message.error" translatable="false">"%1$s"</string>
     <string name="asynctask.message.file_opening">Opening files… </string>
     <string name="asynctask.message.file_reading">Reading files… %1$d%%</string>
     <string name="asynctask.message.cancelled">Updating cancelled. Time: %1$s</string>
@@ -24,7 +21,6 @@
     <string name="settings.draw_color.title">Draw color</string>
     <string name="settings.access.title">Access</string>
     <string name="settings.overview.title">Overview graph</string>
-    <string name="settings.username.hint" translatable="false">User</string>
     <string name="settings.username.summary">Might be empty if auth is not necessary</string>
     <string name="settings.username.title">Username</string>
     <string name="settings.password.summary">Might be empty if auth is not necessary</string>
@@ -61,5 +57,5 @@
     <string name="settings.graph_line_break.summary">If between dots more than this amount of seconds then line will not drawn</string>
     <string name="settings.graph_line_break.title">Graph line break in seconds</string>
     <string name="settings.general.title">General</string>
-    <string name="settings.language.title">App Language</string>
+    <string name="settings.language.title">Language</string>
 </resources>

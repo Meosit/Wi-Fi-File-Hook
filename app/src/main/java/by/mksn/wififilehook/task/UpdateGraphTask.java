@@ -20,11 +20,16 @@ import jcifs.smb.SmbFile;
 
 public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesStats> {
 
+    public static final int RESULT_OK = 0x01;
+    public static final int RESULT_CANCELED = 0x02;
+    public static final int RESULT_ERROR = 0x03;
+    public static final int RESULT_NO_DATA = 0x04;
 
     private static final int MAX_PROGRESS_RESULT = 100;
     private AsyncTaskCallback<ProgressResult, FurnacesStats> callback;
     private Context context;
     private NtlmPasswordAuthentication auth;
+    private int resultCode = RESULT_OK;
 
     public UpdateGraphTask(AsyncTaskCallback<ProgressResult, FurnacesStats> callback, Context context, NtlmPasswordAuthentication auth) {
         this.callback = callback;
@@ -64,6 +69,7 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
             }
 
             if (isCancelled()) {
+                resultCode = RESULT_CANCELED;
                 return null;
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
@@ -71,10 +77,16 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
         } catch (SmbException | MalformedURLException | CsvParseException e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.message_error, e.getMessage())));
+            if (e.getMessage().equals("The system cannot find the file specified.")) {
+                resultCode = RESULT_NO_DATA;
+            } else {
+                resultCode = RESULT_ERROR;
+            }
             return null;
         } catch (Exception e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.message_error, "File reading error: " + e.getMessage())));
+            resultCode = RESULT_ERROR;
             return null;
         }
     }
@@ -89,6 +101,7 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
                 while ((readLine = reader.readLine()) != null) {
                     result.add(readLine);
                     if (isCancelled()) {
+                        resultCode = RESULT_CANCELED;
                         return null;
                     }
                 }
@@ -111,6 +124,6 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
 
     @Override
     protected void onPostExecute(FurnacesStats result) {
-        callback.onAsyncTaskPostExecute(result);
+        callback.onAsyncTaskPostExecute(result, resultCode);
     }
 }

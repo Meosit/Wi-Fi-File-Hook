@@ -2,7 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/settings.general.title">
-
+        <ListPreference
+            android:defaultValue="en"
+            android:entries="@array/languages"
+            android:entryValues="@array/language_codes"
+            android:key="language"
+            android:title="@string/settings.language.title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings.access.title">
         <EditTextPreference

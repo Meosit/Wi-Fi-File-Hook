@@ -6,9 +6,9 @@
     <string name="asynctask.message.cancelled">Обновление отменено. Время: %1$s</string>
     <string name="asynctask.message.file_opening">Открытие файлов…</string>
     <string name="asynctask.message.file_reading">Чтение файлов… %1$d%%</string>
-    <string name="asynctask.message.graph_for.concrete">Сенсор: %1$d. Время: %2$s %3$d:00-%4$d:00</string>
-    <string name="asynctask.message.graph_for.no_data">Нет данных для времени: %1$s %2$:00-%3$d:00 </string>
-    <string name="asynctask.message.graph_for.overview">Общий график для времени: %1$s %2$s</string>
+    <string name="asynctask.message.graph_for.concrete">Сенсор: %1$d. Время: %2$s %3$02d:00-%4$02d:00</string>
+    <string name="asynctask.message.graph_for.no_data">Нет данных для времени: %1$s %2$02d:00-%3$02d:00</string>
+    <string name="asynctask.message.graph_for.overview">Общий график для времени: %1$s %2$s (Курсор: %3$02d:00)</string>
     <string name="asynctask.message.parsing_file">Файлы прочитаны. Парсим…</string>
     <string name="dialog.concrete_index.message">Выберите индекс сенсора для отображения:</string>
     <string name="dialog.concrete_index.positive">Показать</string>
@@ -58,4 +58,5 @@
     <string name="settings.username.title">Имя пользователя</string>
     <string name="settings.visualisation.title">Отображение</string>
     <string name="settings.general.title">Основные</string>
+    <string name="settings.language.title">Язык приложения</string>
 </resources>

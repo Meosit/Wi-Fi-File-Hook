@@ -8,6 +8,6 @@ public interface AsyncTaskCallback<Progress, Result> {
 
     void onAsyncTaskCancelled(Result result);
 
-    void onAsyncTaskPostExecute(Result result);
+    void onAsyncTaskPostExecute(Result result, int resultCode);
 
 }

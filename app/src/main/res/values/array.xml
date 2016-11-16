@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="language_codes">
+        <item>ru</item>
+        <item>en</item>
+    </array>
+    <array name="languages">
+        <item>Русский</item>
+        <item>English</item>
+    </array>
+</resources>

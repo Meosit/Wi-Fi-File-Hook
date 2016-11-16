@@ -1,9 +1,13 @@
 package by.mksn.wififilehook.activity;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
+    private static final String PREF_LANGUAGE = "language";
     private static final String PREF_BASE_PATH = "base_path";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
@@ -87,6 +92,16 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        //turning on wi-fi
+        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+        }
+
         statusText = (TextView) findViewById(R.id.activity_main_value_status);
         progressBar = (ProgressBar) findViewById(R.id.activity_main_progress);
         progressBar.getIndeterminateDrawable().setColorFilter(
@@ -97,8 +112,13 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
         loadSettings();
-        graphMinDate = getCurrentDate();
-        graphMinHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2;
+        graphMinHour = (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2);
+        if (graphMinHour < 0) {
+            graphMinDate = addDaysToDate(getCurrentDate(), -1);
+            graphMinHour += 24;
+        }
+
+
         updateFiles();
     }
 
@@ -146,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
-
         //Constraints
         FurnacesStats.setTemperatureSensorCount(sharedPreferences.getInt(PREF_SENSOR_COUNT, 31));
         FurnacesStats.setGraphBreakSecondRange(sharedPreferences.getInt(PREF_GRAPH_LINE_BREAK, 120));
@@ -174,6 +193,50 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         } else {
             auth = new NtlmPasswordAuthentication("", username, password);
         }
+
+        String languageCode = sharedPreferences.getString(PREF_LANGUAGE, null);
+        if (languageCode != null && !getCurrentLocale().getLanguage().equals(languageCode)) {
+            setLocale(languageCode);
+            recreate();
+        }
+    }
+
+    private void setLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        Configuration config = getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            setSystemLocale(config, locale);
+        } else {
+            setSystemLocaleLegacy(config, locale);
+        }
+        getApplicationContext().getResources().updateConfiguration(config,
+                getResources().getDisplayMetrics());
+    }
+
+    private Locale getCurrentLocale() {
+        Configuration config = getResources().getConfiguration();
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? getSystemLocale(config) : getSystemLocaleLegacy(config);
+    }
+
+    @SuppressWarnings("deprecation")
+    private Locale getSystemLocaleLegacy(Configuration config) {
+        return config.locale;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getSystemLocale(Configuration config) {
+        return config.getLocales().get(0);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setSystemLocaleLegacy(Configuration config, Locale locale) {
+        config.locale = locale;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private void setSystemLocale(Configuration config, Locale locale) {
+        config.setLocale(locale);
     }
 
     private void switchLayout(boolean isConcrete) {
@@ -216,11 +279,15 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 if (timestamp.time.compareTo("24:00:00") < 0) {
                     statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
                             graphMinDate,
-                            timestamp.time));
+                            timestamp.time,
+                            (graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1) % 24
+                    ));
                 } else {
                     statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
                             addDaysToDate(graphMinDate, 1),
-                            (Integer.parseInt(timestamp.time.substring(0, 2)) % 24) + timestamp.time.substring(2, 8)));
+                            (Integer.parseInt(timestamp.time.substring(0, 2)) % 24) + timestamp.time.substring(2, 8),
+                            (graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1) % 24
+                    ));
                 }
             }
         } else {
@@ -336,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         loadSettings();
+        updateFiles();
     }
 
     @Override
@@ -362,13 +430,28 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onAsyncTaskPostExecute(FurnacesStats result) {
-        if (result != null) {
-            furnacesStats = result;
-            redrawGraph();
-        } else {
-            graphConcreteImage.setImageResource(R.drawable.no_data);
-            graphOverviewImage.setImageResource(R.drawable.no_data);
+    public void onAsyncTaskPostExecute(FurnacesStats result, int resultCode) {
+        furnacesStats = result;
+        switch (resultCode) {
+            case UpdateGraphTask.RESULT_OK:
+                furnacesStats = result;
+                redrawGraph();
+                break;
+            case UpdateGraphTask.RESULT_ERROR:
+                graphConcreteImage.setImageResource(R.drawable.error);
+                graphOverviewImage.setImageResource(R.drawable.error);
+                break;
+            case UpdateGraphTask.RESULT_CANCELED:
+                graphConcreteImage.setImageResource(R.drawable.dummy_concrete);
+                graphOverviewImage.setImageResource(R.drawable.dummy_overview);
+                break;
+            case UpdateGraphTask.RESULT_NO_DATA:
+                statusText.setText(getString(R.string.asynctask_message_graph_for_no_data,
+                        (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
+                        graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+                graphConcreteImage.setImageResource(R.drawable.no_data);
+                graphOverviewImage.setImageResource(R.drawable.no_data);
+                break;
         }
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
