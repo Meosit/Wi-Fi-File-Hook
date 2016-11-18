@@ -137,9 +137,9 @@ public final class Graph {
         return drawOffsetTop + drawHeight - y;
     }
 
-    private int calculateMaxConcreteValue(int[] values) {
-        int maxScaleBorder = Integer.MIN_VALUE;
-        for (int value : values) {
+    private float calculateMaxConcreteValue(float[] values) {
+        float maxScaleBorder = Float.MIN_VALUE;
+        for (float value : values) {
             if (maxScaleBorder <= value) {
                 maxScaleBorder = value;
             }
@@ -147,24 +147,34 @@ public final class Graph {
         return ((maxScaleBorder + 9) / 10) * 10;
     }
 
-    private int calculateMinConcreteValue(int[] values) {
-        int minScaleBorder = Integer.MAX_VALUE;
-        for (int value : values) {
+    private float calculateMinConcreteValue(float[] values) {
+        float minScaleBorder = Float.MAX_VALUE;
+        for (float value : values) {
             if (minScaleBorder >= value) {
                 minScaleBorder = value;
             }
         }
-        return (minScaleBorder % 10 == 0) ? (minScaleBorder - 10) : ((minScaleBorder / 10) * 10);
+        return (Math.abs(minScaleBorder % 10) < 0.001) ? (minScaleBorder - 10) : ((minScaleBorder / 10) * 10);
     }
 
-    private int calculateMaxOverviewValue(int[] values) {
-        int maxScaleBorder = Integer.MIN_VALUE;
-        for (int value : values) {
+    private float calculateMaxOverviewValue(float[] values) {
+        float maxScaleBorder = Float.MIN_VALUE;
+        for (float value : values) {
             if (maxScaleBorder <= value) {
                 maxScaleBorder = value;
             }
         }
         return ((maxScaleBorder + 99) / 100) * 100;
+    }
+
+    private float calculateMinOverviewValue(float[] values) {
+        float minScaleBorder = Float.MAX_VALUE;
+        for (float value : values) {
+            if (minScaleBorder >= value) {
+                minScaleBorder = value;
+            }
+        }
+        return (Math.abs(minScaleBorder % 10) < 0.001) ? (minScaleBorder - 10) : ((minScaleBorder / 10) * 10);
     }
 
     private void drawLine(float xStart, float yStart, float xEnd, float yEnd, float width) {
@@ -203,7 +213,7 @@ public final class Graph {
             return;
         }
 
-        int[] values = new int[timeValues.length];
+        float[] values = new float[timeValues.length];
         String[] times = new String[timeValues.length];
         for (int i = 0; i < timeValues.length; i++) {
             FurnacesStats.TimeValue timeValue = timeValues[i];
@@ -214,8 +224,8 @@ public final class Graph {
         float dotRadius = drawWidth / CONCRETE_WIDTH * (defaultDotRadius / 4);
         float lineWidth = drawWidth / CONCRETE_WIDTH * (defaultLineWidth / 4);
         float textMargin = textPaint.measureText("0") / 2;
-        int minValue = calculateMinConcreteValue(values);
-        int maxValue = calculateMaxConcreteValue(values);
+        float minValue = calculateMinConcreteValue(values);
+        float maxValue = calculateMaxConcreteValue(values);
 
         float scaleRatio = drawHeight / (maxValue - minValue);
 
@@ -234,10 +244,6 @@ public final class Graph {
             drawCircle(valueX, valueY, dotRadius);
             oldValueY = valueY;
             oldValueX = valueX;
-            /*drawText(offsetX - (textPaint.measureText(String.valueOf(i + 1)) / 2),
-                    0 - concreteTextSizeDefault, String.valueOf(i + 1));
-            drawText(offsetX - (textPaint.measureText(String.valueOf(values[i])) / 2),
-                    valueY + textMargin, String.valueOf(values[i]));*/
         }
 
         textPaint.setTextAlign(Paint.Align.RIGHT);
@@ -251,7 +257,8 @@ public final class Graph {
 
         for (int i = minHour; i <= maxHour; i++) {
             float offsetX = ((i - minHour) * 3600) * secondInPixels;
-            drawText(offsetX, 0 - (concreteTextSizeDefault) - textMargin, String.valueOf(i % 24).concat(":00"));
+            drawText(offsetX, 0 - (concreteTextSizeDefault) - textMargin,
+                    String.format(Locale.getDefault(), "%02d:00", (i) % 24));
         }
     }
 
@@ -261,28 +268,32 @@ public final class Graph {
                 FurnacesStats.getTemperatureSensorCount();
         float columnWidth = drawWidth / OVERVIEW_WIDTH * defaultColumnWidth;
         float textMargin = textPaint.measureText("0") / 2;
-        int minValue = 0;
-        int maxValue = calculateMaxOverviewValue(Arrays.copyOf(timestamp.getValues(), actualSensorCount));
+        float minValue = calculateMinOverviewValue(Arrays.copyOf(timestamp.getValues(), actualSensorCount));
+        if (minValue >= 0) {
+            minValue = 0;
+        }
+        float maxValue = calculateMaxOverviewValue(Arrays.copyOf(timestamp.getValues(), actualSensorCount));
 
         float scaleRatio = drawHeight / (maxValue - minValue);
         float valueHorizontalOffset = drawWidth / (actualSensorCount + 1);
         float offsetX = valueHorizontalOffset;
 
         for (int i = 0; i < actualSensorCount; i++, offsetX += valueHorizontalOffset) {
-            float valueY = timestamp.getValue(i) * scaleRatio;
-            drawLine(offsetX, minValue, offsetX, valueY, columnWidth);
+            float valueY = (timestamp.getValue(i) - minValue) * scaleRatio;
+            drawLine(offsetX, 0, offsetX, valueY, columnWidth);
             drawText(offsetX - (textPaint.measureText(String.valueOf(i + 1)) / 2),
                     0 - overviewTextSizeDefault, String.valueOf(i + 1));
             drawText(offsetX - (textPaint.measureText(String.valueOf(timestamp.getValue(i))) / 2),
-                    valueY + textMargin, String.valueOf(timestamp.getValue(i)));
+                    valueY + textMargin, String.format(Locale.getDefault(), "%.1f", timestamp.getValue(i)));
         }
         textPaint.setTextAlign(Paint.Align.RIGHT);
         float yBorderMarkingOffset = drawHeight / OVERVIEW_HORIZONTAL_LINES_COUNT;
         float yBorderMarking = 0;
         for (int i = 0; i <= OVERVIEW_HORIZONTAL_LINES_COUNT; i++, yBorderMarking += yBorderMarkingOffset) {
             drawText(-textMargin, yBorderMarking - (overviewTextSizeDefault / 2),
-                    String.format(Locale.getDefault(), "%.0f", yBorderMarking / scaleRatio));
+                    String.format(Locale.getDefault(), "%.0f", yBorderMarking / scaleRatio + minValue));
         }
+        textPaint.setTextAlign(Paint.Align.LEFT);
     }
 
     public Bitmap getResultBitmap() {

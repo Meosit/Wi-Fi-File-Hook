@@ -28,9 +28,9 @@ public final class FurnacesStats {
                     time = (Integer.parseInt(time.substring(0, 2)) + 24) + time.substring(2, 8);
                 }
                 prevTime = time;
-                int[] values = new int[strings.length - 1];
+                float[] values = new float[strings.length - 1];
                 for (int j = 0; j < values.length; j++) {
-                    int value = Integer.parseInt(strings[j + 1]);
+                    float value = Float.parseFloat(strings[j + 1]);
                     values[j] = value;
                 }
                 timestamps[i] = new ValuesTimestamp(values, time);
@@ -167,9 +167,9 @@ public final class FurnacesStats {
     public final class TimeValue implements Comparable<TimeValue> {
 
         public final String time;
-        public final int value;
+        public final float value;
 
-        public TimeValue(String time, int value) {
+        public TimeValue(String time, float value) {
             this.time = time;
             this.value = value;
         }
@@ -183,14 +183,14 @@ public final class FurnacesStats {
     public final class ValuesTimestamp implements Comparable<ValuesTimestamp> {
 
         public final String time;
-        private final int values[];
+        private final float values[];
 
-        ValuesTimestamp(int[] values, String time) {
+        ValuesTimestamp(float[] values, String time) {
             this.values = values;
             this.time = time;
         }
 
-        public int getValue(int index) {
+        public float getValue(int index) {
             if (index < 0 || index >= values.length) {
                 throw new IllegalValueIndexException();
             }
@@ -206,7 +206,7 @@ public final class FurnacesStats {
             return time.compareTo(valuesTimestamp.time);
         }
 
-        public int[] getValues() {
+        public float[] getValues() {
             return values.clone();
         }
     }

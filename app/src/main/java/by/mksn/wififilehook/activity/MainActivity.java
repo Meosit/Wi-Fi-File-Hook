@@ -38,7 +38,6 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-@SuppressWarnings("unchecked")
 public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.DialogCallback, SelectDateDialog.DialogCallback {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
