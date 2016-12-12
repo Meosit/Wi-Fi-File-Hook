@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import by.mksn.wififilehook.logic.exception.CsvParseException;
 import by.mksn.wififilehook.logic.exception.IllegalValueIndexException;
 
-public final class FurnacesStats {
+public final class SensorsStats {
 
     private static int graphHourTimeRange = 10;
     private static int graphHourTimeBigStep = 8;
@@ -14,7 +14,7 @@ public final class FurnacesStats {
     private static int temperatureSensorCount = 31;
     private final ValuesTimestamp[] timestamps;
 
-    public FurnacesStats(String[] readFile) throws CsvParseException {
+    public SensorsStats(String[] readFile) throws CsvParseException {
         try {
             String prevTime = "00:00:00";
             timestamps = new ValuesTimestamp[readFile.length];
@@ -65,7 +65,7 @@ public final class FurnacesStats {
         if (graphBreakSecondRange < 0) {
             throw new IllegalArgumentException();
         }
-        FurnacesStats.graphBreakSecondRange = graphBreakSecondRange;
+        SensorsStats.graphBreakSecondRange = graphBreakSecondRange;
     }
 
     public static int getTemperatureSensorCount() {
@@ -76,7 +76,7 @@ public final class FurnacesStats {
         if (temperatureSensorCount <= 0) {
             throw new IllegalArgumentException();
         }
-        FurnacesStats.temperatureSensorCount = temperatureSensorCount;
+        SensorsStats.temperatureSensorCount = temperatureSensorCount;
     }
 
     public static int getGraphHourTimeRange() {
@@ -87,7 +87,7 @@ public final class FurnacesStats {
         if (range < 2 || range > 48) {
             throw new IllegalArgumentException();
         }
-        FurnacesStats.graphHourTimeRange = range;
+        SensorsStats.graphHourTimeRange = range;
     }
 
     public static int getGraphHourTimeBigStep() {
@@ -98,7 +98,7 @@ public final class FurnacesStats {
         if (step < 1 || step > 24) {
             throw new IllegalArgumentException();
         }
-        FurnacesStats.graphHourTimeBigStep = step;
+        SensorsStats.graphHourTimeBigStep = step;
     }
 
     public static int getGraphHourTimeLittleStep() {
@@ -109,7 +109,7 @@ public final class FurnacesStats {
         if (step < 1 || step > 24) {
             throw new IllegalArgumentException();
         }
-        FurnacesStats.graphHourTimeLittleStep = step;
+        SensorsStats.graphHourTimeLittleStep = step;
     }
 
     public static int timeToSeconds(String time) {

@@ -12,7 +12,7 @@ import android.view.View;
 import com.wefika.horizontalpicker.HorizontalPicker;
 
 import by.mksn.wififilehook.R;
-import by.mksn.wififilehook.logic.FurnacesStats;
+import by.mksn.wififilehook.logic.SensorsStats;
 
 public class ConcreteIndexDialog extends DialogFragment {
 
@@ -31,7 +31,7 @@ public class ConcreteIndexDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View rootView = inflater.inflate(R.layout.dialog_concrete_index, null);
         final HorizontalPicker indexPicker = (HorizontalPicker) rootView.findViewById(R.id.dialog_concrete_index_index);
-        String[] values = new String[FurnacesStats.getTemperatureSensorCount()];
+        String[] values = new String[SensorsStats.getTemperatureSensorCount()];
         for (int i = 0; i < values.length; i++) {
             values[i] = String.valueOf(i + 1);
         }

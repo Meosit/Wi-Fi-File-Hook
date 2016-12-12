@@ -28,7 +28,7 @@ import java.util.Locale;
 import by.mksn.wififilehook.R;
 import by.mksn.wififilehook.dialog.ConcreteIndexDialog;
 import by.mksn.wififilehook.dialog.SelectDateDialog;
-import by.mksn.wififilehook.logic.FurnacesStats;
+import by.mksn.wififilehook.logic.SensorsStats;
 import by.mksn.wififilehook.logic.Graph;
 import by.mksn.wififilehook.logic.ProgressResult;
 import by.mksn.wififilehook.task.AsyncTaskCallback;
@@ -38,7 +38,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, FurnacesStats>, ConcreteIndexDialog.DialogCallback, SelectDateDialog.DialogCallback {
+public class MainActivity extends AppCompatActivity implements AsyncTaskCallback<ProgressResult, SensorsStats>, ConcreteIndexDialog.DialogCallback, SelectDateDialog.DialogCallback {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private int graphMinHour;
 
     private UpdateGraphTask updateGraphTask;
-    private FurnacesStats furnacesStats;
+    private SensorsStats sensorsStats;
     private String basePath;
     private boolean isAsyncTaskRunning;
     private NtlmPasswordAuthentication auth;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
         overviewZoomer = new PhotoViewAttacher(graphOverviewImage);
         concreteZoomer = new PhotoViewAttacher(graphConcreteImage);
         loadSettings();
-        graphMinHour = (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2);
+        graphMinHour = (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - SensorsStats.getGraphHourTimeRange() / 2);
         if (graphMinHour < 0) {
             graphMinDate = addDaysToDate(getCurrentDate(), -1);
             graphMinHour += 24;
@@ -168,11 +168,11 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     private void loadSettings() {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(getApplicationContext());
         //Constraints
-        FurnacesStats.setTemperatureSensorCount(sharedPreferences.getInt(PREF_SENSOR_COUNT, 31));
-        FurnacesStats.setGraphBreakSecondRange(sharedPreferences.getInt(PREF_GRAPH_LINE_BREAK, 120));
-        FurnacesStats.setGraphHourTimeRange(sharedPreferences.getInt(PREF_GRAPH_TIME_RANGE, 10));
-        FurnacesStats.setGraphHourTimeBigStep(sharedPreferences.getInt(PREF_GRAPH_BIG_STEP, 8));
-        FurnacesStats.setGraphHourTimeLittleStep(sharedPreferences.getInt(PREF_GRAPH_LITTLE_STEP, 1));
+        SensorsStats.setTemperatureSensorCount(sharedPreferences.getInt(PREF_SENSOR_COUNT, 31));
+        SensorsStats.setGraphBreakSecondRange(sharedPreferences.getInt(PREF_GRAPH_LINE_BREAK, 120));
+        SensorsStats.setGraphHourTimeRange(sharedPreferences.getInt(PREF_GRAPH_TIME_RANGE, 10));
+        SensorsStats.setGraphHourTimeBigStep(sharedPreferences.getInt(PREF_GRAPH_BIG_STEP, 8));
+        SensorsStats.setGraphHourTimeLittleStep(sharedPreferences.getInt(PREF_GRAPH_LITTLE_STEP, 1));
 
         //Visualisation
         Graph.setOverviewDrawDefaultColor(sharedPreferences.getInt(PREF_OVERVIEW_DRAW_COLOR, Color.WHITE));
@@ -267,40 +267,40 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     private void redrawGraph() {
-        if (furnacesStats != null) {
+        if (sensorsStats != null) {
             if (isConcreteGraphVisible) {
                 drawGraphConcrete(concreteFurnaceIndex);
                 statusText.setText(getString(R.string.asynctask_message_graph_for_concrete, concreteFurnaceIndex + 1,
                         (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
-                        graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+                        graphMinHour % 24, (graphMinHour + SensorsStats.getGraphHourTimeRange()) % 24));
             } else {
-                FurnacesStats.ValuesTimestamp timestamp = furnacesStats.getNearestTimeMaxTimestamp(
-                        String.format(Locale.ROOT, "%02d:00:00", graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1));
+                SensorsStats.ValuesTimestamp timestamp = sensorsStats.getNearestTimeMaxTimestamp(
+                        String.format(Locale.ROOT, "%02d:00:00", graphMinHour + SensorsStats.getGraphHourTimeRange() / 2 + 1));
                 drawGraphOverview(timestamp);
                 if (timestamp.time.compareTo("24:00:00") < 0) {
                     statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
                             graphMinDate,
                             timestamp.time,
-                            (graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1) % 24
+                            (graphMinHour + SensorsStats.getGraphHourTimeRange() / 2 + 1) % 24
                     ));
                 } else {
                     statusText.setText(getString(R.string.asynctask_message_graph_for_overview,
                             addDaysToDate(graphMinDate, 1),
                             (Integer.parseInt(timestamp.time.substring(0, 2)) % 24) + timestamp.time.substring(2, 8),
-                            (graphMinHour + FurnacesStats.getGraphHourTimeRange() / 2 + 1) % 24
+                            (graphMinHour + SensorsStats.getGraphHourTimeRange() / 2 + 1) % 24
                     ));
                 }
             }
         } else {
             statusText.setText(getString(R.string.asynctask_message_graph_for_no_data,
                     (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
-                    graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+                    graphMinHour % 24, (graphMinHour + SensorsStats.getGraphHourTimeRange()) % 24));
             graphConcreteImage.setImageResource(R.drawable.no_data);
             graphOverviewImage.setImageResource(R.drawable.no_data);
         }
     }
 
-    private void drawGraphOverview(FurnacesStats.ValuesTimestamp timestamp) {
+    private void drawGraphOverview(SensorsStats.ValuesTimestamp timestamp) {
         Graph graph = new Graph(this, R.drawable.overview);
         graph.drawOverviewGraph(timestamp);
         graphOverviewImage.setImageDrawable(graph.getResultBitmapDrawable());
@@ -309,8 +309,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
 
     private void drawGraphConcrete(int furnaceIndex) {
         Graph graph = new Graph(this, R.drawable.concrete);
-        graph.drawConcreteGraph(furnacesStats.getConcreteIndexAllTimeValues(furnaceIndex),
-                graphMinHour, graphMinHour + FurnacesStats.getGraphHourTimeRange());
+        graph.drawConcreteGraph(sensorsStats.getConcreteIndexAllTimeValues(furnaceIndex),
+                graphMinHour, graphMinHour + SensorsStats.getGraphHourTimeRange());
         graphConcreteImage.setImageDrawable(graph.getResultBitmapDrawable());
         concreteZoomer.update();
     }
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             graphMinDate = addDaysToDate(graphMinDate, -1);
             graphMinHour = 24 + graphMinHour;
             updateFiles();
-        } else if (graphMinHour > 48 - FurnacesStats.getGraphHourTimeRange()) {
+        } else if (graphMinHour > 48 - SensorsStats.getGraphHourTimeRange()) {
             graphMinDate = addDaysToDate(graphMinDate, 1);
             graphMinHour -= 24;
             updateFiles();
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                         SettingsActivity.REQUEST_CODE);
                 return true;
             case R.id.action_show_concrete:
-                if (furnacesStats != null) {
+                if (sensorsStats != null) {
                     if (isConcreteGraphVisible) {
                         switchLayout(false);
                         isConcreteGraphVisible = false;
@@ -378,19 +378,19 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
                 stopUpdating();
                 return true;
             case R.id.action_next_big_step:
-                moveGraphConstraints(FurnacesStats.getGraphHourTimeBigStep());
+                moveGraphConstraints(SensorsStats.getGraphHourTimeBigStep());
                 redrawGraph();
                 return true;
             case R.id.action_next_little_step:
-                moveGraphConstraints(FurnacesStats.getGraphHourTimeLittleStep());
+                moveGraphConstraints(SensorsStats.getGraphHourTimeLittleStep());
                 redrawGraph();
                 return true;
             case R.id.action_prev_big_step:
-                moveGraphConstraints(-FurnacesStats.getGraphHourTimeBigStep());
+                moveGraphConstraints(-SensorsStats.getGraphHourTimeBigStep());
                 redrawGraph();
                 return true;
             case R.id.action_prev_little_step:
-                moveGraphConstraints(-FurnacesStats.getGraphHourTimeLittleStep());
+                moveGraphConstraints(-SensorsStats.getGraphHourTimeLittleStep());
                 redrawGraph();
                 return true;
             case R.id.action_refresh:
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onAsyncTaskCancelled(FurnacesStats result) {
+    public void onAsyncTaskCancelled(SensorsStats result) {
         statusText.setText(getString(R.string.asynctask_message_cancelled, getCurrentTime(false)));
         progressBar.setProgress(progressBar.getMax());
         progressBar.setVisibility(View.GONE);
@@ -431,11 +431,11 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     }
 
     @Override
-    public void onAsyncTaskPostExecute(FurnacesStats result, int resultCode) {
-        furnacesStats = result;
+    public void onAsyncTaskPostExecute(SensorsStats result, int resultCode) {
+        sensorsStats = result;
         switch (resultCode) {
             case UpdateGraphTask.RESULT_OK:
-                furnacesStats = result;
+                sensorsStats = result;
                 redrawGraph();
                 break;
             case UpdateGraphTask.RESULT_ERROR:
@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
             case UpdateGraphTask.RESULT_NO_DATA:
                 statusText.setText(getString(R.string.asynctask_message_graph_for_no_data,
                         (graphMinHour < 24) ? graphMinDate : addDaysToDate(graphMinDate, 1),
-                        graphMinHour % 24, (graphMinHour + FurnacesStats.getGraphHourTimeRange()) % 24));
+                        graphMinHour % 24, (graphMinHour + SensorsStats.getGraphHourTimeRange()) % 24));
                 graphConcreteImage.setImageResource(R.drawable.no_data);
                 graphOverviewImage.setImageResource(R.drawable.no_data);
                 break;
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskCallback
     @Override
     public void onSelectDateDialogDateSet(String chosenDate) {
         graphMinDate = chosenDate;
-        graphMinHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - FurnacesStats.getGraphHourTimeRange() / 2;
+        graphMinHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - SensorsStats.getGraphHourTimeRange() / 2;
         updateFiles();
     }
 }

@@ -11,14 +11,14 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import by.mksn.wififilehook.R;
-import by.mksn.wififilehook.logic.FurnacesStats;
+import by.mksn.wififilehook.logic.SensorsStats;
 import by.mksn.wififilehook.logic.ProgressResult;
 import by.mksn.wififilehook.logic.exception.CsvParseException;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
-public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesStats> {
+public class UpdateGraphTask extends AsyncTask<String, ProgressResult, SensorsStats> {
 
     public static final int RESULT_OK = 0x01;
     public static final int RESULT_CANCELED = 0x02;
@@ -26,12 +26,12 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
     public static final int RESULT_NO_DATA = 0x04;
 
     private static final int MAX_PROGRESS_RESULT = 100;
-    private AsyncTaskCallback<ProgressResult, FurnacesStats> callback;
+    private AsyncTaskCallback<ProgressResult, SensorsStats> callback;
     private Context context;
     private NtlmPasswordAuthentication auth;
     private int resultCode = RESULT_OK;
 
-    public UpdateGraphTask(AsyncTaskCallback<ProgressResult, FurnacesStats> callback, Context context, NtlmPasswordAuthentication auth) {
+    public UpdateGraphTask(AsyncTaskCallback<ProgressResult, SensorsStats> callback, Context context, NtlmPasswordAuthentication auth) {
         this.callback = callback;
         this.context = context;
         this.auth = auth;
@@ -43,7 +43,7 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
     }
 
     @Override
-    protected FurnacesStats doInBackground(String... strings) {
+    protected SensorsStats doInBackground(String... strings) {
         SmbFile smbFileOne;
         SmbFile smbFileTwo;
         try {
@@ -73,7 +73,7 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
                 return null;
             }
             publishProgress(new ProgressResult(50, context.getString(R.string.asynctask_message_parsing_file)));
-            return new FurnacesStats(readFile);
+            return new SensorsStats(readFile);
         } catch (SmbException | MalformedURLException | CsvParseException e) {
             publishProgress(new ProgressResult(MAX_PROGRESS_RESULT,
                     context.getString(R.string.message_error, e.getMessage())));
@@ -118,12 +118,12 @@ public class UpdateGraphTask extends AsyncTask<String, ProgressResult, FurnacesS
     }
 
     @Override
-    protected void onCancelled(FurnacesStats furnacesStats) {
-        callback.onAsyncTaskCancelled(furnacesStats);
+    protected void onCancelled(SensorsStats sensorsStats) {
+        callback.onAsyncTaskCancelled(sensorsStats);
     }
 
     @Override
-    protected void onPostExecute(FurnacesStats result) {
+    protected void onPostExecute(SensorsStats result) {
         callback.onAsyncTaskPostExecute(result, resultCode);
     }
 }

@@ -191,7 +191,7 @@ public final class Graph {
         canvas.drawText(text, getNormalizedX(startX), getNormalizedY(bottomY), textPaint);
     }
 
-    public void drawConcreteGraph(FurnacesStats.TimeValue[] timeValues, int minHour, int maxHour) {
+    public void drawConcreteGraph(SensorsStats.TimeValue[] timeValues, int minHour, int maxHour) {
         String minTime = String.format(Locale.ROOT, "%02d:00:00", minHour);
         String maxTime = String.format(Locale.ROOT, "%02d:00:00", maxHour);
         int minIndex = 0, maxIndex = timeValues.length - 1;
@@ -216,7 +216,7 @@ public final class Graph {
         float[] values = new float[timeValues.length];
         String[] times = new String[timeValues.length];
         for (int i = 0; i < timeValues.length; i++) {
-            FurnacesStats.TimeValue timeValue = timeValues[i];
+            SensorsStats.TimeValue timeValue = timeValues[i];
             times[i] = timeValue.time;
             values[i] = timeValue.value;
         }
@@ -233,12 +233,12 @@ public final class Graph {
         int minTimeInSeconds = minHour * 3600;
         float secondInPixels = drawWidth / (timeRangeInSeconds);
         float oldValueY = (values[0] - minValue) * scaleRatio;
-        float oldValueX = (FurnacesStats.timeToSeconds(times[0]) - minTimeInSeconds) * secondInPixels;
+        float oldValueX = (SensorsStats.timeToSeconds(times[0]) - minTimeInSeconds) * secondInPixels;
         for (int i = 0; i < values.length; i++) {
-            int timeInSeconds = FurnacesStats.timeToSeconds(times[i]) - minTimeInSeconds;
+            int timeInSeconds = SensorsStats.timeToSeconds(times[i]) - minTimeInSeconds;
             float valueY = (values[i] - minValue) * scaleRatio;
             float valueX = timeInSeconds * secondInPixels;
-            if (((valueX - oldValueX) / secondInPixels) <= FurnacesStats.getGraphBreakSecondRange()) {
+            if (((valueX - oldValueX) / secondInPixels) <= SensorsStats.getGraphBreakSecondRange()) {
                 drawLine(oldValueX, oldValueY, valueX, valueY, lineWidth);
             }
             drawCircle(valueX, valueY, dotRadius);
@@ -262,10 +262,10 @@ public final class Graph {
         }
     }
 
-    public void drawOverviewGraph(FurnacesStats.ValuesTimestamp timestamp) {
-        int actualSensorCount = (FurnacesStats.getTemperatureSensorCount() > timestamp.getValueCount()) ?
+    public void drawOverviewGraph(SensorsStats.ValuesTimestamp timestamp) {
+        int actualSensorCount = (SensorsStats.getTemperatureSensorCount() > timestamp.getValueCount()) ?
                 timestamp.getValueCount() :
-                FurnacesStats.getTemperatureSensorCount();
+                SensorsStats.getTemperatureSensorCount();
         float columnWidth = drawWidth / OVERVIEW_WIDTH * defaultColumnWidth;
         float textMargin = textPaint.measureText("0") / 2;
         float minValue = calculateMinOverviewValue(Arrays.copyOf(timestamp.getValues(), actualSensorCount));
